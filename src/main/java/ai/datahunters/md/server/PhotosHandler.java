@@ -28,8 +28,10 @@ public class PhotosHandler {
     }
 
     public Mono<ServerResponse> getJpgs(ServerRequest request){
-        var photos =  photosRepository.findByFileType("JPEG", PageRequest.of(0, 100));
-        var result = photos.map((Photo::getId)).get().collect(Collectors.toList());
-        return ServerResponse.ok().body(BodyInserters.fromValue(result.size()));
+        var photos = Mono.fromFuture(photosRepository.findByFileType("JPEG", PageRequest.of(0, 100)).thenApply(
+                p -> p.map((Photo::getId)).get().collect(Collectors.toList())
+        )).flatMap(result -> ServerResponse.ok().body(BodyInserters.fromValue(result.size())));
+
+        return photos;
     }
 }
