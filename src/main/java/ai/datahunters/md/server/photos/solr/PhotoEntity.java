@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.solr;
+package ai.datahunters.md.server.photos.solr;
 
 import lombok.Value;
 import org.springframework.data.annotation.Id;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Value
 @SolrDocument(collection = "metadata_digger")
-public class Photo {
+public class PhotoEntity {
     private @Id String id;
     private @Indexed(name = "file_type") String fileType;
     private @Indexed List<String> directories;

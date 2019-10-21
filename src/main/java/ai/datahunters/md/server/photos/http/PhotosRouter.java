@@ -1,4 +1,4 @@
-package ai.datahunters.md.server;
+package ai.datahunters.md.server.photos.http;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
