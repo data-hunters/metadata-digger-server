@@ -1,0 +1,11 @@
+{
+  "photos": [
+    {
+      "id": "1234",
+      "file_type": "file type",
+      "directories": [
+        "dir"
+      ]
+    }
+  ]
+}

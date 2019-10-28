@@ -23,7 +23,7 @@ dependencies {
 	}
     implementation("org.apache.solr:solr-solrj")
     implementation("org.springframework.boot:spring-boot-starter-data-solr")
-
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")

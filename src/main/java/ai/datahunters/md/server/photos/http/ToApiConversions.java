@@ -1,11 +1,10 @@
 package ai.datahunters.md.server.photos.http;
 
+import ai.datahunters.md.server.photos.PhotoEntity;
 import ai.datahunters.md.server.photos.http.json.SearchResponse;
-import ai.datahunters.md.server.photos.solr.PhotoEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ToApiConversions {
     public static SearchResponse responseFromPhotos(List<PhotoEntity> modelPhotos) {

@@ -1,10 +1,8 @@
 package ai.datahunters.md.server.photos.http;
 
+import ai.datahunters.md.server.photos.PhotosRepository;
 import ai.datahunters.md.server.photos.http.json.JsonSerializer;
-import ai.datahunters.md.server.photos.solr.PhotoEntity;
-import ai.datahunters.md.server.photos.solr.PhotosRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
+import ai.datahunters.md.server.photos.http.json.read.SearchRequestRead;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -22,22 +20,15 @@ public class PhotosHandler {
         this.photosRepository = repo;
     }
 
-    public Mono<ServerResponse> count(ServerRequest request) {
-        long count = photosRepository.count();
-        return ServerResponse.ok().contentType(MediaType.TEXT_PLAIN)
-                .body(BodyInserters.fromValue("Photos count" + count + ""));
 
-    }
-
-    public Mono<ServerResponse> getJpgs(ServerRequest request) {
-        var photos = Mono.fromFuture(photosRepository.findByFileType("JPEG", PageRequest.of(0, 100))
-                .thenApply(
-                        p -> p.get().collect(Collectors.toList())
-                )
-        ).map(ToApiConversions::responseFromPhotos)
+    public Mono<ServerResponse> search(ServerRequest request) {
+        return request.bodyToMono(String.class)
+                .map(SearchRequestRead::read)
+                .map(o -> o.orElseThrow(() -> new IllegalArgumentException("Cannot deserialize search request")))
+                .flatMap(req -> Mono.fromFuture(photosRepository.search(req)))
+                .map(page -> page.get().collect(Collectors.toList()))
+                .map(ToApiConversions::responseFromPhotos)
                 .flatMap(JsonSerializer::responseToJson)
-                .flatMap(result -> ServerResponse.ok().body(BodyInserters.fromValue(result)));
-
-        return photos;
+                .flatMap(resp -> ServerResponse.ok().body(BodyInserters.fromValue(resp)));
     }
 }
