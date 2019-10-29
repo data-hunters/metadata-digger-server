@@ -3,6 +3,9 @@ package ai.datahunters.md.server.server;
 import ai.datahunters.md.server.photos.PhotoEntity;
 import ai.datahunters.md.server.photos.PhotosRepository;
 import ai.datahunters.md.server.photos.SearchRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +25,20 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.BDDMockito.given;
-
 @RunWith(SpringRunner.class)
 //  We create a `@SpringBootTest`, starting an actual server on a `RANDOM_PORT`
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PhotosEndpointTest {
+    ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     private WebTestClient webTestClient;
 
     @MockBean
-    PhotosRepository repo;
+    private PhotosRepository repo;
 
     @Test
-    public void searchByType() throws IOException {
+    public void searchByType() throws IOException, JsonProcessingException {
         var expectedRequest = SearchRequest.builder()
                 .text_query(Optional.of("test"))
                 .build();
@@ -58,8 +62,19 @@ public class PhotosEndpointTest {
                 .body(BodyInserters.fromValue("{\"text_query\": \"test\"}"))
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                // and use the dedicated DSL to test assertions against the response
                 .expectStatus().isOk()
-                .expectBody(String.class).isEqualTo(expectedResponse);
+                .expectBody(String.class)
+                .consumeWith(respBody ->
+                        compareBodies(respBody.getResponseBody(), expectedResponse)
+                );
+
+    }
+
+    void compareBodies(String receivedResponse, String expectedResonse) {
+        try {
+            Assert.assertEquals(mapper.readTree(receivedResponse), mapper.readTree(expectedResonse));
+        } catch (JsonProcessingException e) {
+            Assert.fail(e.getMessage());
+        }
     }
 }

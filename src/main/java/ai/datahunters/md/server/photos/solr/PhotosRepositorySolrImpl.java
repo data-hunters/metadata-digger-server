@@ -26,6 +26,11 @@ public class PhotosRepositorySolrImpl implements PhotosRepository {
 
     @Override
     public CompletableFuture<Page<PhotoEntity>> search(SearchRequest searchTerm) {
-        return CompletableFuture.completedFuture(Page.empty());
+        String queryString = searchTerm.getText_query().orElseGet(() -> "");
+        SimpleQuery query = new SimpleQuery(queryString);
+
+        return CompletableFuture.supplyAsync(() ->
+                solrTemplate.queryForPage(collectionName, query, PhotoEntity.class)
+        );
     }
 }

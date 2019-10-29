@@ -9,8 +9,6 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.stream.Collectors;
-
 @Component
 public class PhotosHandler {
 
@@ -26,7 +24,6 @@ public class PhotosHandler {
                 .map(SearchRequestRead::read)
                 .map(o -> o.orElseThrow(() -> new IllegalArgumentException("Cannot deserialize search request")))
                 .flatMap(req -> Mono.fromFuture(photosRepository.search(req)))
-                .map(page -> page.get().collect(Collectors.toList()))
                 .map(ToApiConversions::responseFromPhotos)
                 .flatMap(JsonSerializer::responseToJson)
                 .flatMap(resp -> ServerResponse.ok().body(BodyInserters.fromValue(resp)));
