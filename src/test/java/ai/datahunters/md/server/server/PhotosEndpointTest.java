@@ -20,7 +20,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -43,10 +45,14 @@ public class PhotosEndpointTest {
                 .text_query(Optional.of("test"))
                 .build();
         var photo = PhotoEntity.builder()
-                .directories(List.of("dir"))
-                .fileType("file type")
                 .id("1234")
+                .basePath("base_path")
+                .filePath("file_path")
+                .fileType("file type")
+                .directories(List.of("dir"))
+                .metaData(prepareDynamicFields())
                 .build();
+
         var page = new PageImpl<>(List.of(photo));
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
@@ -76,5 +82,12 @@ public class PhotosEndpointTest {
         } catch (JsonProcessingException e) {
             Assert.fail(e.getMessage());
         }
+    }
+
+    Map<String, List<String>> prepareDynamicFields() {
+        var map = new HashMap<String, List<String>>();
+        map.put("dynamic_field_1", List.of("el11", "el12"));
+        map.put("dynamic_field_2", List.of("el21", "el22"));
+        return map;
     }
 }
