@@ -22,8 +22,11 @@ public class ToApiConversions {
     private static Photo toApiPhoto(PhotoEntity entity) {
         return new Photo(
                 entity.getId(),
+                entity.getBasePath(),
+                entity.getFilePath(),
                 entity.getFileType(),
-                entity.getDirectories()
+                entity.getDirectories(),
+                entity.getMetaData()
         );
     }
 }

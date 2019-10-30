@@ -2,10 +2,22 @@
   "photos": [
     {
       "id": "1234",
+      "base_path": "base_path",
+      "file_path": "file_path",
       "file_type": "file type",
       "directories": [
         "dir"
-      ]
+      ],
+      "meta_data": {
+        "dynamic_field_1": [
+          "el11",
+          "el12"
+        ],
+        "dynamic_field_2": [
+          "el21",
+          "el22"
+        ]
+      }
     }
   ],
   "page": 0,
