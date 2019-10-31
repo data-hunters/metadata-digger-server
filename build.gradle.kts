@@ -14,6 +14,7 @@ java {
 
 repositories {
 	mavenCentral()
+    maven { setUrl("http://oss.jfrog.org/artifactory/oss-snapshot-local/") }
 }
 
 dependencies {
@@ -24,6 +25,11 @@ dependencies {
     implementation("org.apache.solr:solr-solrj")
     implementation("org.springframework.boot:spring-boot-starter-data-solr")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
+
+    implementation("io.springfox:springfox-swagger2:3.0.0-SNAPSHOT")
+    implementation("io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT")
+    implementation("io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT")
+
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
