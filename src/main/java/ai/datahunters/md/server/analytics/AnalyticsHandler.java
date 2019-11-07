@@ -1,38 +1,25 @@
 package ai.datahunters.md.server.analytics;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.springframework.web.reactive.function.BodyInserters.fromValue;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
-
-
+@AllArgsConstructor
 @Component
 public class AnalyticsHandler {
 
     private AnalyticsService service;
 
-    @Autowired
-    public AnalyticsHandler(AnalyticsService service) {
-        this.service = service;
-    }
-
-    public Mono<ServerResponse> getAnalytics()  {
+    public ResponseEntity getAnalytics()  {
         try {
-            return ok().contentType(MediaType.APPLICATION_JSON).
-                    body(fromValue(new AnalyticsData(service.photoCount())));
+            return ResponseEntity.ok(new AnalyticsData(service.photoCount()));
         }  catch (ExecutionException e) {
-            return ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(fromValue("{" +
-                            "\"error\" : \"cannot connect to Solr\"" +
-                            "               }"));
+            return ResponseEntity.ok("{" +
+                            "\"error\" : \"cannot connect to Solr\"  }");
         } catch (InterruptedException e) {
-            return Mono.error(e);
+            return ResponseEntity.status(500).build();
         }
     }
 }

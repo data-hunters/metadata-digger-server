@@ -78,9 +78,9 @@ public class PhotosEndpointTest {
 
     }
 
-    void compareBodies(String receivedResponse, String expectedResonse) {
+    void compareBodies(String receivedResponse, String expectedResponse) {
         try {
-            Assert.assertEquals(mapper.readTree(receivedResponse), mapper.readTree(expectedResonse));
+            Assert.assertEquals(mapper.readTree(receivedResponse), mapper.readTree(expectedResponse));
         } catch (JsonProcessingException e) {
             Assert.fail(e.getMessage());
         }
