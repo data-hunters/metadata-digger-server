@@ -30,7 +30,7 @@ public class AnalyticsEndpointTest {
     @Test
     public void endPointTest() throws ExecutionException, InterruptedException {
 
-        String expectedResponse = "{\"PhotoCount\":10}";
+        String expectedResponse = "{\"images_number\":10}";
 
         BDDMockito.when(mockService.photoCount()).thenReturn(10L);
 

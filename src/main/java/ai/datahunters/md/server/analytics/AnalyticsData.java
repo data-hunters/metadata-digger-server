@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AnalyticsData {
 
-    @JsonProperty("PhotoCount")
+    @JsonProperty("images_number")
     private long photoCount;
 
 }
