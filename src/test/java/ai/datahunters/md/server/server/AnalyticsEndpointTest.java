@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -28,11 +28,11 @@ public class AnalyticsEndpointTest {
     private AnalyticsService mockService;
 
     @Test
-    public void endPointTest() throws ExecutionException, InterruptedException {
+    public void endPointTest()  {
 
         String expectedResponse = "{\"images_number\":10}";
 
-        BDDMockito.when(mockService.photoCount()).thenReturn(10L);
+        BDDMockito.when(mockService.photoCount()).thenReturn(CompletableFuture.completedFuture(10L));
 
         webTestClient
                 .get()

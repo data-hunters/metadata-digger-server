@@ -3,7 +3,8 @@ package ai.datahunters.md.server.analytics;
 import ai.datahunters.md.server.photos.PhotosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.concurrent.ExecutionException;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class AnalyticsService  {
@@ -15,7 +16,7 @@ public class AnalyticsService  {
         this.repo = repo;
     }
 
-   public long photoCount() throws InterruptedException, ExecutionException {
-            return repo.count().get();
+   public CompletableFuture<Long> photoCount() {
+            return repo.count();
    }
 }
