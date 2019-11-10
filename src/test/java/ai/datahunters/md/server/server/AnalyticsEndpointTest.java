@@ -1,9 +1,6 @@
 package ai.datahunters.md.server.server;
 
 import ai.datahunters.md.server.analytics.AnalyticsService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -16,10 +13,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.concurrent.CompletableFuture;
 
+import static ai.datahunters.md.server.server.JsonUtils.verifyJsonOutput;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AnalyticsEndpointTest {
-    ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private WebTestClient webTestClient;
@@ -42,17 +40,7 @@ public class AnalyticsEndpointTest {
                 .expectStatus().isOk()
                 .expectBody(String.class)
                 .consumeWith(respBody ->
-                        compareBodies(respBody.getResponseBody(), expectedResponse)
+                        verifyJsonOutput(respBody.getResponseBody(), expectedResponse)
                 );
     }
-
-    void compareBodies(String receivedResponse, String expectedResponse) {
-        try {
-           Assert.assertEquals(mapper.readTree(receivedResponse), mapper.readTree(expectedResponse));
-        } catch (JsonProcessingException e) {
-            Assert.fail(e.getMessage());
-        }
-    }
-
-
 }
