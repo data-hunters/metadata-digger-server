@@ -24,8 +24,11 @@ public class PhotosController {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping(value = "/api/v1/upload")
-    public Mono<UploadResponse> handleUpload(@RequestPart("file") Mono<FilePart> part) {
-        return part.flatMap(uploadService::handleUpload);
+    @PostMapping(value = "/api/v1/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<UploadResponse> handleUpload(@RequestPart("file") Mono<FilePart> file) {
+        return file.flatMap(uploadService::handleUpload)
+                .onErrorMap(error ->
+                        error
+                );
     }
 }
