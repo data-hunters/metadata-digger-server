@@ -17,6 +17,11 @@ repositories {
     maven { setUrl("http://oss.jfrog.org/artifactory/oss-snapshot-local/") }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+}
+
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
