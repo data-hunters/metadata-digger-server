@@ -3,7 +3,6 @@ package ai.datahunters.md.server.server;
 import ai.datahunters.md.server.photos.PhotoEntity;
 import ai.datahunters.md.server.photos.PhotosRepository;
 import ai.datahunters.md.server.photos.SearchRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 @RunWith(SpringRunner.class)
 //  We create a `@SpringBootTest`, starting an actual server on a `RANDOM_PORT`
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class PhotosEndpointTest {
+public class SearchPhotosEndpointTest {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -39,7 +38,7 @@ public class PhotosEndpointTest {
     private PhotosRepository repo;
 
     @Test
-    public void searchByType() throws IOException, JsonProcessingException {
+    public void searchByType() throws IOException {
         var expectedRequest = SearchRequest.builder()
                 .text_query(Optional.of("test"))
                 .build();

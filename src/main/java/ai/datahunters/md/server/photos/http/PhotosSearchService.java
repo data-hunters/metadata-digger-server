@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Component
-public class PhotosHandler {
+public class PhotosSearchService {
 
     private PhotosRepository photosRepository;
 
