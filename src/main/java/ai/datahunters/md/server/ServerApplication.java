@@ -9,9 +9,6 @@ public class ServerApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(ServerApplication.class, args);
-
-		TestWebClient gwc = new TestWebClient();
-		System.out.println(gwc.getResult());
 	}
 
 }

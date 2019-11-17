@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import reactor.core.publisher.Mono;
 
 public class JsonSerializer {
+    private JsonSerializer() {
+    }
     private static final ObjectMapper JSON = new ObjectMapper();
 
     public static Mono<String> responseToJson(SearchResponse resp) {

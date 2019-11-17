@@ -26,7 +26,6 @@ public class PhotosController {
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/api/v1/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<UploadResponse> handleUpload(@RequestPart("file") Mono<FilePart> file) {
-        var unused = "123";
         return file.flatMap(uploadService::handleUpload)
                 .onErrorMap(error ->
                         error
