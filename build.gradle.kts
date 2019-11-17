@@ -3,6 +3,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
 	id("java")
     id("io.freefair.lombok") version "4.1.2"
+    id("org.sonarqube") version "2.7.1"
 }
 
 group = "ai.datahunters.md"
@@ -20,7 +21,12 @@ repositories {
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
 }
-
+sonarqube {
+    properties {
+        property("sonar.organization", "data-hunters")
+        property("sonar.projectKey", "data-hunters_metadata-digger-server")
+    }
+}
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
