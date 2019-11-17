@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class SearchRequestRead {
+    private SearchRequestRead() {
+    }
     private static final ObjectMapper JSON = buildObjectMapper();
 
     public static Optional<SearchRequest> read(String json) {

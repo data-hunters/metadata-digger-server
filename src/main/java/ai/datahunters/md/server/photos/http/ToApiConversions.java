@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ToApiConversions {
+    private ToApiConversions() {
+    }
     public static SearchResponse responseFromPhotos(Page<PhotoEntity> modelPhotos) {
         List<Photo> apiPhotos = modelPhotos.stream().map(ToApiConversions::toApiPhoto).collect(Collectors.toList());
         var page = modelPhotos.getNumber();

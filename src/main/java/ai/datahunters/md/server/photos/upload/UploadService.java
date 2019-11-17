@@ -12,7 +12,6 @@ import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,7 +21,6 @@ public class UploadService {
 
     public Mono<UploadResponse> handleUpload(FilePart filePart) {
         try {
-            String fileName = UUID.randomUUID().toString();
             Path tempFile = fileService.createFileForUpload();
 
             AsynchronousFileChannel channel = AsynchronousFileChannel.open(tempFile, StandardOpenOption.WRITE);
