@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -39,10 +41,10 @@ public class SearchPhotosEndpointTest {
 
     @Test
     public void searchByType() throws IOException {
-        var expectedRequest = SearchRequest.builder()
+        SearchRequest expectedRequest = SearchRequest.builder()
                 .text_query(Optional.of("test"))
                 .build();
-        var photo = PhotoEntity.builder()
+        PhotoEntity photo = PhotoEntity.builder()
                 .id("1234")
                 .basePath("base_path")
                 .filePath("file_path")
@@ -51,14 +53,14 @@ public class SearchPhotosEndpointTest {
                 .metaData(prepareDynamicFields())
                 .build();
 
-        var page = new PageImpl<>(List.of(photo));
+        Page<PhotoEntity> page = new PageImpl<>(List.of(photo));
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
-        var expectedResponseFile = Paths.get(
+        Path expectedResponseFile = Paths.get(
                 getClass().getClassLoader().getResource("photosendpointtest/expected_response.json").getPath()
         );
 
-        var expectedResponse = Files.readString(expectedResponseFile);
+        String expectedResponse = Files.readString(expectedResponseFile);
         webTestClient
                 // Create a GET request to test an endpoint
                 .post()
@@ -76,7 +78,7 @@ public class SearchPhotosEndpointTest {
     }
 
     Map<String, List<String>> prepareDynamicFields() {
-        var map = new HashMap<String, List<String>>();
+        Map<String, List<String>> map = new HashMap<>();
         map.put("dynamic_field_1", List.of("el11", "el12"));
         map.put("dynamic_field_2", List.of("el21", "el22"));
         return map;

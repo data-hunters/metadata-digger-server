@@ -13,8 +13,8 @@ public class ToApiConversions {
     }
     public static SearchResponse responseFromPhotos(Page<PhotoEntity> modelPhotos) {
         List<Photo> apiPhotos = modelPhotos.stream().map(ToApiConversions::toApiPhoto).collect(Collectors.toList());
-        var page = modelPhotos.getNumber();
-        var total = modelPhotos.getTotalElements();
+        int page = modelPhotos.getNumber();
+        long total = modelPhotos.getTotalElements();
         return SearchResponse.builder()
                 .photos(apiPhotos)
                 .page(page)

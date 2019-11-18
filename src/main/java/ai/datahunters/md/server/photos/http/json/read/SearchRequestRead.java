@@ -23,7 +23,7 @@ public class SearchRequestRead {
     }
 
     private static ObjectMapper buildObjectMapper() {
-        var mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module());
         return mapper;
     }
