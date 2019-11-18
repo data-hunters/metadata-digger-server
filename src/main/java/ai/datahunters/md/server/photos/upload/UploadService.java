@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,16 @@ public class UploadService {
             return DataBufferUtils.write(filePart.content(), channel, 0)
                     .doOnComplete(() -> System.out.println("uploaded"))
                     .collect(Collectors.counting())
-                    .map(count -> List.of(tempFile.toAbsolutePath().toString()))
+                    .map(count -> buildResultList(tempFile.toAbsolutePath().toString()))
                     .map(ToApiConversions::responseFromUploadedFiles);
         } catch (IOException e) {
             return Mono.error(e);
         }
+    }
+
+    private List<String> buildResultList(String file) {
+        List<String> l = new ArrayList<>();
+        l.add(file);
+        return l;
     }
 }
