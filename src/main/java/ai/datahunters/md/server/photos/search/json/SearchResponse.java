@@ -1,6 +1,5 @@
-package ai.datahunters.md.server.photos.http.json;
+package ai.datahunters.md.server.photos.search.json;
 
-import ai.datahunters.md.server.photos.http.Photo;
 import lombok.Builder;
 import lombok.Value;
 

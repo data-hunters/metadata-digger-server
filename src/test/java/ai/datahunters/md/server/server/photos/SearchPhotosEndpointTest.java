@@ -1,8 +1,8 @@
-package ai.datahunters.md.server.server;
+package ai.datahunters.md.server.server.photos;
 
-import ai.datahunters.md.server.photos.PhotoEntity;
-import ai.datahunters.md.server.photos.PhotosRepository;
-import ai.datahunters.md.server.photos.SearchRequest;
+import ai.datahunters.md.server.photos.search.PhotosRepository;
+import ai.datahunters.md.server.photos.search.json.SearchRequest;
+import ai.datahunters.md.server.photos.search.solr.PhotoEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +17,14 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static ai.datahunters.md.server.server.JsonUtils.verifyJsonOutput;
+import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutput;
 import static org.mockito.BDDMockito.given;
 @RunWith(SpringRunner.class)
 //  We create a `@SpringBootTest`, starting an actual server on a `RANDOM_PORT`
@@ -42,25 +40,25 @@ public class SearchPhotosEndpointTest {
     @Test
     public void searchByType() throws IOException {
         SearchRequest expectedRequest = SearchRequest.builder()
-                .text_query(Optional.of("test"))
+                .textQuery(Optional.of("test"))
                 .build();
         PhotoEntity photo = PhotoEntity.builder()
                 .id("1234")
                 .basePath("base_path")
                 .filePath("file_path")
                 .fileType("file type")
-                .directories(List.of("dir"))
+                .directories(Collections.singletonList("dir"))
                 .metaData(prepareDynamicFields())
                 .build();
 
-        Page<PhotoEntity> page = new PageImpl<>(List.of(photo));
+        Page<PhotoEntity> page = new PageImpl<>(Collections.singletonList(photo));
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
         Path expectedResponseFile = Paths.get(
                 getClass().getClassLoader().getResource("photosendpointtest/expected_response.json").getPath()
         );
 
-        String expectedResponse = Files.readString(expectedResponseFile);
+        String expectedResponse = new String(Files.readAllBytes(expectedResponseFile), StandardCharsets.UTF_8);
         webTestClient
                 // Create a GET request to test an endpoint
                 .post()
@@ -79,8 +77,8 @@ public class SearchPhotosEndpointTest {
 
     Map<String, List<String>> prepareDynamicFields() {
         Map<String, List<String>> map = new HashMap<>();
-        map.put("dynamic_field_1", List.of("el11", "el12"));
-        map.put("dynamic_field_2", List.of("el21", "el22"));
+        map.put("dynamic_field_1", Arrays.asList("el11", "el12"));
+        map.put("dynamic_field_2", Arrays.asList("el21", "el22"));
         return map;
     }
 }

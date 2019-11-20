@@ -1,8 +1,7 @@
-package ai.datahunters.md.server.photos.solr;
+package ai.datahunters.md.server.photos.search.solr;
 
-import ai.datahunters.md.server.photos.PhotoEntity;
-import ai.datahunters.md.server.photos.PhotosRepository;
-import ai.datahunters.md.server.photos.SearchRequest;
+import ai.datahunters.md.server.photos.search.PhotosRepository;
+import ai.datahunters.md.server.photos.search.json.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -26,7 +25,7 @@ public class PhotosRepositorySolrImpl implements PhotosRepository {
 
     @Override
     public CompletableFuture<Page<PhotoEntity>> search(SearchRequest searchTerm) {
-        String queryString = searchTerm.getText_query().orElseGet(() -> "");
+        String queryString = searchTerm.getTextQuery().orElseGet(() -> "");
         SimpleQuery query = new SimpleQuery(queryString);
 
         return CompletableFuture.supplyAsync(() ->

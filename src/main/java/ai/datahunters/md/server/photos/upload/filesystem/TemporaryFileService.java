@@ -1,5 +1,6 @@
-package ai.datahunters.md.server.photos.upload;
+package ai.datahunters.md.server.photos.upload.filesystem;
 
+import ai.datahunters.md.server.photos.upload.FileService;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

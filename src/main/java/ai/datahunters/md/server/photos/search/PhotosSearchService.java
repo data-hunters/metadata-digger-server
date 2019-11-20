@@ -1,8 +1,8 @@
-package ai.datahunters.md.server.photos.http;
+package ai.datahunters.md.server.photos.search;
 
-import ai.datahunters.md.server.photos.PhotosRepository;
-import ai.datahunters.md.server.photos.SearchRequest;
-import ai.datahunters.md.server.photos.http.json.SearchResponse;
+import ai.datahunters.md.server.photos.http.ToApiConversions;
+import ai.datahunters.md.server.photos.search.json.SearchRequest;
+import ai.datahunters.md.server.photos.search.json.SearchResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
