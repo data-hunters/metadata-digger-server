@@ -1,8 +1,9 @@
 package ai.datahunters.md.server.photos.http;
 
-import ai.datahunters.md.server.photos.PhotoEntity;
-import ai.datahunters.md.server.photos.http.json.SearchResponse;
-import ai.datahunters.md.server.photos.upload.UploadResponse;
+import ai.datahunters.md.server.photos.search.json.Photo;
+import ai.datahunters.md.server.photos.search.json.SearchResponse;
+import ai.datahunters.md.server.photos.search.solr.PhotoEntity;
+import ai.datahunters.md.server.photos.upload.json.UploadResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

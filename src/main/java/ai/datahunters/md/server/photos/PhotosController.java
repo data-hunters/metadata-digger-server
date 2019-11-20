@@ -1,9 +1,10 @@
-package ai.datahunters.md.server.photos.http;
+package ai.datahunters.md.server.photos;
 
-import ai.datahunters.md.server.photos.SearchRequest;
-import ai.datahunters.md.server.photos.http.json.SearchResponse;
-import ai.datahunters.md.server.photos.upload.UploadResponse;
+import ai.datahunters.md.server.photos.search.PhotosSearchService;
+import ai.datahunters.md.server.photos.search.json.SearchRequest;
+import ai.datahunters.md.server.photos.search.json.SearchResponse;
 import ai.datahunters.md.server.photos.upload.UploadService;
+import ai.datahunters.md.server.photos.upload.json.UploadResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;

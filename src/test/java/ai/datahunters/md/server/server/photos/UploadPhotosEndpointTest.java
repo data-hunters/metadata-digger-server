@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.server;
+package ai.datahunters.md.server.server.photos;
 
 import ai.datahunters.md.server.photos.upload.FileService;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static ai.datahunters.md.server.server.JsonUtils.verifyJsonOutput;
+import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutput;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)

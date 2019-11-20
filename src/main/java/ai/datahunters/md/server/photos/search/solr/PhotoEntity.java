@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.photos;
+package ai.datahunters.md.server.photos.search.solr;
 
 import lombok.Builder;
 import lombok.Value;
@@ -15,13 +15,16 @@ import java.util.Map;
 @SolrDocument(collection = "metadata_digger")
 @Builder
 public class PhotoEntity {
-    private @Id String id;
+    private @Id
+    String id;
     private @Indexed(name = "base_path")
     String basePath;
     private @Indexed(name = "file_path")
     String filePath;
-    private @Indexed(name = "file_type") String fileType;
-    private @Indexed List<String> directories;
+    private @Indexed(name = "file_type")
+    String fileType;
+    private @Indexed
+    List<String> directories;
     private @Dynamic
     @Field("md_*")
     Map<String, List<String>> metaData;

@@ -1,5 +1,6 @@
-package ai.datahunters.md.server.photos;
+package ai.datahunters.md.server.photos.search.json;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
@@ -11,7 +12,8 @@ import java.util.Optional;
 @Value
 @Builder
 public class SearchRequest {
-    private Optional<String> text_query;
+    @JsonProperty("text_query")
+    private Optional<String> textQuery;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class SearchRequestBuilder {

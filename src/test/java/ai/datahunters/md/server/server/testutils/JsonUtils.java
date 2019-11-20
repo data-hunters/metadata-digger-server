@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.server;
+package ai.datahunters.md.server.server.testutils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

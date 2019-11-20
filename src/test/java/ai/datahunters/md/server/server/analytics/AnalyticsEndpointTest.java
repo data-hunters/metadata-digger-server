@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.server;
+package ai.datahunters.md.server.server.analytics;
 
 import ai.datahunters.md.server.analytics.AnalyticsService;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.concurrent.CompletableFuture;
 
-import static ai.datahunters.md.server.server.JsonUtils.verifyJsonOutput;
+import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutput;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

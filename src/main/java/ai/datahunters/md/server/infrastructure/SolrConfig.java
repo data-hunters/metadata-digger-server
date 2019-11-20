@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.photos.solr;
+package ai.datahunters.md.server.infrastructure;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
