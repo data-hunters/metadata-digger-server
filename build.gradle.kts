@@ -36,6 +36,7 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.19")
     implementation("org.apache.tika:tika-core:1.22")
     implementation("org.tukaani:xz:1.8")
+    testImplementation("commons-codec:commons-codec:1.13")
 
     implementation("org.apache.solr:solr-solrj")
     implementation("org.springframework.boot:spring-boot-starter-data-solr")
