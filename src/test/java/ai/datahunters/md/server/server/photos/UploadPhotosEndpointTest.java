@@ -1,6 +1,5 @@
 package ai.datahunters.md.server.server.photos;
 
-import ai.datahunters.md.server.photos.upload.ArchiveHandler;
 import ai.datahunters.md.server.photos.upload.filesystem.FileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +26,6 @@ public class UploadPhotosEndpointTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Autowired
-    private ArchiveHandler archiveHandler;
-
     @MockBean
     private FileService service;
 
@@ -40,7 +36,6 @@ public class UploadPhotosEndpointTest {
         String expectedResponse = "{ \"uploaded_files\": [ \"" + expectedPath.toString() + "\"] }";
 
         given(service.createFileForUpload()).willReturn(expectedPath);
-
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", new ClassPathResource("uploadendpointtest/test_file.zip"));
@@ -56,9 +51,5 @@ public class UploadPhotosEndpointTest {
                 .consumeWith(respBody ->
                         verifyJsonOutput(respBody.getResponseBody(), expectedResponse)
                 );
-
     }
-
-
-
 }
