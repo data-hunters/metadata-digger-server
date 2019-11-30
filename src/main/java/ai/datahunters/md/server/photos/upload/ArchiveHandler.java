@@ -28,13 +28,13 @@ public class ArchiveHandler {
         this.fileService = fileService;
     }
 
-    public static final String GTAR = "application/x-gtar";
-    public static final String TAR = "application/x-tar";
-    public static final String ZIP = "application/zip";
-    public static final String GZ = "application/gzip";
-    public static final String XZ = "application/x-xz";
-    public static final String BZ2 = "application/x-bzip2";
-    public static final String INVALID_FILE_MSG = "Use valid ZIP (*.zip), GZIP (*.tar.gz), XZ (*.tar.xz), BZIP2 (*.tar.bz2) " +
+    private static final String GTAR = "application/x-gtar";
+    private static final String TAR = "application/x-tar";
+    private static final String ZIP = "application/zip";
+    private static final String GZ = "application/gzip";
+    private static final String XZ = "application/x-xz";
+    private static final String BZ2 = "application/x-bzip2";
+    private static final String INVALID_FILE_MSG = "Use valid ZIP (*.zip), GZIP (*.tar.gz), XZ (*.tar.xz), BZIP2 (*.tar.bz2) " +
             "or uncompressed archive (*.tar)";
 
     private Path parentDirForFiles;
