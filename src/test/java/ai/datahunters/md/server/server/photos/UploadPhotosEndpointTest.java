@@ -1,6 +1,6 @@
 package ai.datahunters.md.server.server.photos;
 
-import ai.datahunters.md.server.photos.upload.FileService;
+import ai.datahunters.md.server.photos.upload.filesystem.FileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,6 @@ public class UploadPhotosEndpointTest {
     @MockBean
     private FileService service;
 
-
     @Test
     public void uploadPhotos() throws IOException {
         Path expectedPath = Files.createTempFile("prefix", "suffix");
@@ -38,10 +37,8 @@ public class UploadPhotosEndpointTest {
 
         given(service.createFileForUpload()).willReturn(expectedPath);
 
-
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", new ClassPathResource("uploadendpointtest/test_file.zip"));
-
 
         webTestClient
                 .post()
