@@ -51,4 +51,6 @@ public class UploadPhotosEndpointTest {
                 .consumeWith(respBody ->
                         verifyJsonOutput(respBody.getResponseBody(), expectedResponse)
                 );
+
+    }
 }
