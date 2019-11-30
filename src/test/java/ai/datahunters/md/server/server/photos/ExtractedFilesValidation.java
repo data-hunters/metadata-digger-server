@@ -24,38 +24,37 @@ import static org.mockito.Mockito.mock;
 
 public class ExtractedFilesValidation {
     private String TEST_DIR = "uploadendpointtest/";
-  
+
     FileService fileService = mock(FileService.class);
     ArchiveHandler archiveHandler = new ArchiveHandler(Paths.get("mock"),fileService);
 
-   @Test
+    @Test
     public void integrityValidation() throws IOException, ArchiveHandlerException {
-       Path testDir = createTestDir();
-       given(fileService.createDirForExtraction(any(Path.class))).willReturn(testDir);
+        Path testDir = createTestDir();
+        given(fileService.createDirForExtraction(any(Path.class))).willReturn(testDir);
 
-       archiveHandler.probeContentAndUnarchive(openArchive(TEST_DIR + "MZIP.zip"));
+        archiveHandler.probeContentAndUnarchive(openArchive(TEST_DIR + "MZIP.zip"));
 
-       Assertions.assertEquals("9e537fd87c06667e5d87679e6300092b3383bf5c3685b96c36639157f776379b",
+        Assertions.assertEquals("9e537fd87c06667e5d87679e6300092b3383bf5c3685b96c36639157f776379b",
                DigestUtils.sha256Hex(new FileInputStream(testDir.resolve("happy.png").toFile())));
-       Assertions.assertEquals("dbe900e9465c658b9b4a7b4073ac9eac05cc52da6ee90dec80e62c4803c22955",
+        Assertions.assertEquals("dbe900e9465c658b9b4a7b4073ac9eac05cc52da6ee90dec80e62c4803c22955",
                DigestUtils.sha256Hex(new FileInputStream(testDir.resolve("smile.png").toFile())));
-       FileUtils.deleteDirectory(testDir.toFile());
-   }
+        FileUtils.deleteDirectory(testDir.toFile());
+    }
   
-   @Test
-   public void checkDirCleanup() throws IOException {
-      Path testDir = createTestDir();
-      given(fileService.createDirForExtraction(any(Path.class))).willReturn(testDir);
+    @Test
+    public void checkDirCleanup() throws IOException {
+        Path testDir = createTestDir();
+        given(fileService.createDirForExtraction(any(Path.class))).willReturn(testDir);
 
-      Assertions.assertThrows(IOException.class, () ->
+        Assertions.assertThrows(IOException.class, () ->
               archiveHandler.probeContentAndUnarchive(openArchive(TEST_DIR + "MTAR_WITH_INVALID_ENTRY.tar")));
 
-      Assertions.assertFalse(testDir.toFile().exists());
+        Assertions.assertFalse(testDir.toFile().exists());
+    }
 
-   }
-  
-   private Path createTestDir() throws IOException {
-      Path testDir = Paths.get(Long.toUnsignedString(new Random().nextLong()));
-      return Files.createDirectory(testDir);
-   }
+    private Path createTestDir() throws IOException {
+        Path testDir = Paths.get(Long.toUnsignedString(new Random().nextLong()));
+        return Files.createDirectory(testDir);
+    }
 }
