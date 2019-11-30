@@ -1,6 +1,7 @@
 package ai.datahunters.md.server.photos.upload;
 
 import ai.datahunters.md.server.photos.http.ToApiConversions;
+import ai.datahunters.md.server.photos.upload.filesystem.FileService;
 import ai.datahunters.md.server.photos.upload.json.UploadResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

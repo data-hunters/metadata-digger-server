@@ -81,7 +81,7 @@ public class ArchiveHandler {
             try {
                 FileUtils.deleteDirectory(extractionDir.toFile());
             } catch (IOException ex) {
-                throw new IOException("I/O exception while extracting Cleanup unsuccessful", e);
+                throw new IOException("I/O exception while extracting. Cleanup unsuccessful", e);
             }
             throw new IOException("I/O exception while writing new files. Extraction failed", e);
         }

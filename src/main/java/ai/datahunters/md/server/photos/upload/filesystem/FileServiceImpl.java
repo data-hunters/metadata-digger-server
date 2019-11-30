@@ -17,13 +17,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Path createDirForExtraction(Path parrentPath) throws IOException {
-        if (Files.notExists(parrentPath)) {
-            Files.createDirectory(parrentPath);
-        } else if (!Files.isDirectory(parrentPath)) {
-            throw new FilerException("Misconfiguration: \"" + parrentPath.toString() +
+    public Path createDirForExtraction(Path parentDir) throws IOException {
+        if (Files.notExists(parentDir)) {
+            Files.createDirectory(parentDir);
+        } else if (!Files.isDirectory(parentDir)) {
+            throw new FilerException("Misconfiguration: \"" + parentDir.toString() +
                     "\" already exists and it is NOT a directory.");
         }
-        return Files.createDirectory(parrentPath.resolve(Instant.now().toString()));
+        return Files.createDirectory(parentDir.resolve(Instant.now().toString()));
     }
 }
