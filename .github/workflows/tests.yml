@@ -4,9 +4,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: MrRamych/gradle-actions/openjdk-11@3.0
+    - uses: MrRamych/gradle-actions/openjdk-8@3.1
       with:
-        args: -Dsonar.host.url=https://sonarcloud.io test build sonarqube
+        args: test
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
