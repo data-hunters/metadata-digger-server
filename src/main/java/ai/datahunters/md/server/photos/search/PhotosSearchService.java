@@ -15,6 +15,7 @@ public class PhotosSearchService {
 
 
     public Mono<SearchResponse> search(SearchRequest request) {
+        String notUsed = "testingSonar";
         return Mono.fromFuture(photosRepository.search(request))
                 .map(ToApiConversions::responseFromPhotos);
     }
