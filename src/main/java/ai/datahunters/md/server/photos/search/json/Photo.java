@@ -15,7 +15,10 @@ public class Photo {
     private String filePath;
     @JsonProperty("file_type")
     private String fileType;
-    private List<String> directories;
+    @JsonProperty("directory_names")
+    private List<String> directoryNames;
+    @JsonProperty("tag_names")
+    private List<String> tagNames;
     @JsonProperty("meta_data")
     private Map<String, List<String>> metaData;
 }

@@ -33,7 +33,8 @@ public class ToApiConversions {
                 entity.getBasePath(),
                 entity.getFilePath(),
                 entity.getFileType(),
-                entity.getDirectories(),
+                entity.getDirectoryNames(),
+                entity.getTagNames(),
                 entity.getMetaData()
         );
     }

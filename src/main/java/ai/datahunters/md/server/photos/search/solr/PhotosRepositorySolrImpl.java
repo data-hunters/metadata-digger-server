@@ -20,7 +20,7 @@ public class PhotosRepositorySolrImpl implements PhotosRepository {
 
     @Override
     public CompletableFuture<Long> count() {
-        return CompletableFuture.supplyAsync(() -> solrTemplate.count(collectionName, new SimpleQuery()));
+        return CompletableFuture.supplyAsync(() -> solrTemplate.count(collectionName, new SimpleQuery("*:*")));
     }
 
     @Override

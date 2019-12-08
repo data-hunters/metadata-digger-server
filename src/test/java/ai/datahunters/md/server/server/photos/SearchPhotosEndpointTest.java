@@ -47,7 +47,8 @@ public class SearchPhotosEndpointTest {
                 .basePath("base_path")
                 .filePath("file_path")
                 .fileType("file type")
-                .directories(Collections.singletonList("dir"))
+                .directoryNames(Collections.singletonList("dir"))
+                .tagNames(Collections.singletonList("tag"))
                 .metaData(prepareDynamicFields())
                 .build();
 

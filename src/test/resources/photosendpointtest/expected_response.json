@@ -5,8 +5,11 @@
       "base_path": "base_path",
       "file_path": "file_path",
       "file_type": "file type",
-      "directories": [
+      "directory_names": [
         "dir"
+      ],
+      "tag_names": [
+        "tag"
       ],
       "meta_data": {
         "dynamic_field_1": [
