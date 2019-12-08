@@ -23,8 +23,10 @@ public class PhotoEntity {
     String filePath;
     private @Indexed(name = "file_type")
     String fileType;
-    private @Indexed
-    List<String> directories;
+    private @Indexed(name = "directory_names")
+    List<String> directoryNames;
+    private @Indexed(name = "tag_names")
+    List<String> tagNames;
     private @Dynamic
     @Field("md_*")
     Map<String, List<String>> metaData;
