@@ -20,8 +20,9 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchRequest {
-    @JsonProperty("text_query")
-    private Optional<String> textQuery;
+    @JsonProperty(value = "text_query")
+    @Builder.Default
+    private final Optional<String> textQuery = Optional.empty();
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class SearchRequestBuilder {
