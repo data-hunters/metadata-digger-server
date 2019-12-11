@@ -25,7 +25,7 @@ public class PhotosRepositorySolrImpl implements PhotosRepository {
 
     @Override
     public CompletableFuture<Page<PhotoEntity>> search(SearchRequest searchTerm) {
-        String queryString = searchTerm.getTextQuery().orElseGet(() -> "");
+        String queryString = searchTerm.getTextQuery().orElseGet(() -> "*:*");
         SimpleQuery query = new SimpleQuery(queryString);
 
         return CompletableFuture.supplyAsync(() ->

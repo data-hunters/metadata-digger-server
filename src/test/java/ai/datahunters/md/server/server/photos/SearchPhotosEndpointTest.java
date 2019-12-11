@@ -26,6 +26,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutput;
 import static org.mockito.BDDMockito.given;
+
 @RunWith(SpringRunner.class)
 //  We create a `@SpringBootTest`, starting an actual server on a `RANDOM_PORT`
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -56,7 +57,7 @@ public class SearchPhotosEndpointTest {
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
         Path expectedResponseFile = Paths.get(
-                getClass().getClassLoader().getResource("photosendpointtest/expected_response.json").getPath()
+                getClass().getClassLoader().getResource("photosendpointtest/expected_non_empty_response.json").getPath()
         );
 
         String expectedResponse = new String(Files.readAllBytes(expectedResponseFile), StandardCharsets.UTF_8);
@@ -74,6 +75,35 @@ public class SearchPhotosEndpointTest {
                         verifyJsonOutput(respBody.getResponseBody(), expectedResponse)
                 );
 
+    }
+
+    @Test
+    public void searchByEmptyQuery() throws IOException {
+        SearchRequest expectedRequest = SearchRequest.builder()
+                .textQuery(Optional.empty())
+                .build();
+
+        Page<PhotoEntity> page = new PageImpl<>(Collections.emptyList());
+        given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
+
+        Path expectedResponseFile = Paths.get(
+                getClass().getClassLoader().getResource("photosendpointtest/expected_empty_response.json").getPath()
+        );
+
+        String expectedResponse = new String(Files.readAllBytes(expectedResponseFile), StandardCharsets.UTF_8);
+        webTestClient
+                // Create a GET request to test an endpoint
+                .post()
+                .uri("/api/v1/photos")
+                .body(BodyInserters.fromValue("{}"))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(respBody ->
+                        verifyJsonOutput(respBody.getResponseBody(), expectedResponse)
+                );
     }
 
     Map<String, List<String>> prepareDynamicFields() {
