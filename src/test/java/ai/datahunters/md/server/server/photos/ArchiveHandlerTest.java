@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static ai.datahunters.md.server.server.testutils.IOHelper.openArchive;
@@ -26,7 +27,7 @@ public class ArchiveHandlerTest {
 
     @Test
     public void fileRecognitionTest() throws IOException, ArchiveHandlerException {
-        List<String> expected = Arrays.asList("smile.png");
+        List<String> expected = Collections.singletonList("smile.png");
 
         Assertions.assertThrows(ArchiveHandlerException.class,
                 () -> archiveHandler.probeContentAndUnarchive(openArchive(TEST_DIR + "test_file.zip")));

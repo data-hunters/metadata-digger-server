@@ -1,5 +1,6 @@
 package ai.datahunters.md.server.server.photos;
 
+import ai.datahunters.md.server.photos.upload.ArchiveHandler;
 import ai.datahunters.md.server.photos.upload.filesystem.FileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static ai.datahunters.md.server.server.testutils.IOHelper.createTestDir;
 import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutput;
 import static org.mockito.BDDMockito.given;
 
@@ -28,17 +30,20 @@ public class UploadPhotosEndpointTest {
 
     @MockBean
     private FileService service;
+    private ArchiveHandler archiveHandler = new ArchiveHandler(service);
 
     @Test
     public void uploadPhotos() throws IOException {
+
+        Path testDir = createTestDir();
         Path expectedPath = Files.createTempFile("prefix", "suffix");
 
         String expectedResponse = "{ \"uploaded_files\": [ \"" + expectedPath.toString() + "\"] }";
 
-        given(service.createFileForUpload()).willReturn(expectedPath);
+        given(service.createDirForExtraction()).willReturn(testDir);
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part("file", new ClassPathResource("uploadendpointtest/test_file.zip"));
+        builder.part("file", new ClassPathResource("uploadendpointtest/MZIP.zip"));
 
         webTestClient
                 .post()

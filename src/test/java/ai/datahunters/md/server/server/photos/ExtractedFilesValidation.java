@@ -10,15 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Random;
 
+import static ai.datahunters.md.server.server.testutils.IOHelper.createTestDir;
 import static ai.datahunters.md.server.server.testutils.IOHelper.openArchive;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -26,12 +21,12 @@ public class ExtractedFilesValidation {
     private String TEST_DIR = "uploadendpointtest/";
 
     FileService fileService = mock(FileService.class);
-    ArchiveHandler archiveHandler = new ArchiveHandler(Paths.get("mock"),fileService);
+    ArchiveHandler archiveHandler = new ArchiveHandler(fileService);
 
     @Test
     public void integrityValidation() throws IOException, ArchiveHandlerException {
         Path testDir = createTestDir();
-        given(fileService.createDirForExtraction(any(Path.class))).willReturn(testDir);
+        given(fileService.createDirForExtraction()).willReturn(testDir);
 
         archiveHandler.probeContentAndUnarchive(openArchive(TEST_DIR + "MZIP.zip"));
 
@@ -45,16 +40,11 @@ public class ExtractedFilesValidation {
     @Test
     public void checkDirCleanup() throws IOException {
         Path testDir = createTestDir();
-        given(fileService.createDirForExtraction(any(Path.class))).willReturn(testDir);
+        given(fileService.createDirForExtraction()).willReturn(testDir);
 
         Assertions.assertThrows(IOException.class, () ->
               archiveHandler.probeContentAndUnarchive(openArchive(TEST_DIR + "MTAR_WITH_INVALID_ENTRY.tar")));
 
         Assertions.assertFalse(testDir.toFile().exists());
-    }
-
-    private Path createTestDir() throws IOException {
-        Path testDir = Paths.get(Long.toUnsignedString(new Random().nextLong()));
-        return Files.createDirectory(testDir);
     }
 }

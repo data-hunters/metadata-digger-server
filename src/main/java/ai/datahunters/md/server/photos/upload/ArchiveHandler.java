@@ -10,7 +10,6 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
@@ -23,8 +22,7 @@ import java.util.List;
 @Service
 public class ArchiveHandler {
 
-    public ArchiveHandler(@Value("${dirForUploadedFiles}") Path parentDirForFiles, FileService fileService) {
-        this.parentDirForFiles = parentDirForFiles;
+    public ArchiveHandler(FileService fileService) {
         this.fileService = fileService;
     }
 
@@ -37,7 +35,6 @@ public class ArchiveHandler {
     private static final String INVALID_FILE_MSG = "Use valid ZIP (*.zip), GZIP (*.tar.gz), XZ (*.tar.xz), BZIP2 (*.tar.bz2) " +
             "or uncompressed archive (*.tar)";
 
-    private Path parentDirForFiles;
     private FileService fileService;
 
     Tika tika = new Tika();
@@ -71,7 +68,7 @@ public class ArchiveHandler {
         List<String> uploadedFilesList = new ArrayList<>();
         ArchiveEntry entry;
 
-        Path extractionDir = fileService.createDirForExtraction(parentDirForFiles);
+        Path extractionDir = fileService.createDirForExtraction();
         try {
             while ((entry = archive.getNextEntry()) != null) {
                 IOUtils.copy(archive, FileUtils.openOutputStream(extractionDir.resolve(entry.getName()).toFile()));
