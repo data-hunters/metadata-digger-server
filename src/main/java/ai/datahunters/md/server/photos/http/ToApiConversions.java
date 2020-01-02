@@ -25,7 +25,7 @@ public class ToApiConversions {
     }
 
     public static IndexingResponse responseFromUploadResult(FileUploaded result) {
-        return new IndexingResponse(result.getUploadId().getId());
+        return new IndexingResponse(result.getIndexingJobId().getId());
     }
 
     private static Photo toApiPhoto(PhotoEntity entity) {

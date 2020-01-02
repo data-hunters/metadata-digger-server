@@ -1,7 +1,7 @@
 package ai.datahunters.md.server.photos.indexing.upload;
 
 import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
-import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;
@@ -23,17 +23,17 @@ public class UploadService {
 
     private FileService fileService;
 
-    public Mono<FileUploaded> handleUpload(UploadId uploadId, FilePart filePart) {
-        log.info("Starting upload for id" + uploadId);
+    public Mono<FileUploaded> handleUpload(IndexingJobId indexingJobId, FilePart filePart) {
+        log.info("Starting upload for id" + indexingJobId);
         try {
-            Path tempFile = fileService.createFileForUpload(uploadId);
+            Path tempFile = fileService.createFileForUpload(indexingJobId);
 
             AsynchronousFileChannel channel = AsynchronousFileChannel.open(tempFile, StandardOpenOption.WRITE);
 
             return DataBufferUtils.write(filePart.content(), channel, 0)
-                    .doOnComplete(() -> log.info("Upload " + uploadId + " completed"))
+                    .doOnComplete(() -> log.info("Upload " + indexingJobId + " completed"))
                     .collect(Collectors.counting())
-                    .map(count -> new FileUploaded(uploadId, tempFile));
+                    .map(count -> new FileUploaded(indexingJobId, tempFile));
         } catch (IOException e) {
             return Mono.error(e);
         }

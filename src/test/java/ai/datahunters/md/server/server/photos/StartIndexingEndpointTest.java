@@ -1,8 +1,8 @@
 package ai.datahunters.md.server.server.photos;
 
 import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
-import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
-import ai.datahunters.md.server.photos.indexing.uploadid.UploadIdFactory;
+import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
+import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobIdGenerator;
 import ai.datahunters.md.server.server.testutils.IOHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +31,10 @@ public class StartIndexingEndpointTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    private UploadId uploadId = new UploadId(UUID.fromString("4b858941-f2fb-4d9b-a9cc-42c104e4458b"));
+    private IndexingJobId indexingJobId = new IndexingJobId(UUID.fromString("4b858941-f2fb-4d9b-a9cc-42c104e4458b"));
 
     @MockBean
-    private UploadIdFactory uploadIdFactory;
+    private IndexingJobIdGenerator indexingJobIdGenerator;
 
     @MockBean
     private FileService service;
@@ -47,9 +47,9 @@ public class StartIndexingEndpointTest {
 
         String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/upload_response.json");
 
-        given(uploadIdFactory.build()).willReturn(uploadId);
-        given(service.createDirForExtraction(uploadId)).willReturn(testDir);
-        given(service.createFileForUpload(uploadId)).willReturn(uploadTempFile);
+        given(indexingJobIdGenerator.build()).willReturn(indexingJobId);
+        given(service.createDirForExtraction(indexingJobId)).willReturn(testDir);
+        given(service.createFileForUpload(indexingJobId)).willReturn(uploadTempFile);
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", new ClassPathResource("uploadendpointtest/MZIP.zip"));

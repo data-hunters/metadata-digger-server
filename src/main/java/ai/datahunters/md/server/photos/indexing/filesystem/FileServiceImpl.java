@@ -1,6 +1,6 @@
 package ai.datahunters.md.server.photos.indexing.filesystem;
 
-import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
 
 import javax.annotation.processing.FilerException;
 import java.io.IOException;
@@ -24,13 +24,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Path createFileForUpload(UploadId uploadId) throws IOException {
-        return Files.createTempFile(uploadDir, "upload", uploadId.getName());
+    public Path createFileForUpload(IndexingJobId indexingJobId) throws IOException {
+        return Files.createTempFile(uploadDir, "upload", indexingJobId.getName());
     }
 
     @Override
-    public Path createDirForExtraction(UploadId uploadId) throws IOException {
-        return Files.createDirectory(extractionDir.resolve(uploadId.getName()));
+    public Path createDirForExtraction(IndexingJobId indexingJobId) throws IOException {
+        return Files.createDirectory(extractionDir.resolve(indexingJobId.getName()));
     }
 
     private void createDirectory(Path directory) throws IOException {

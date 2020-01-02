@@ -2,7 +2,7 @@ package ai.datahunters.md.server.photos.indexing.extract;
 
 import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
 import ai.datahunters.md.server.photos.indexing.upload.FileUploaded;
-import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -24,11 +24,11 @@ public class ExtractService {
     }
 
     public void unarchiveUploadedFile(FileUploaded fileUploaded) {
-        log.info("Extraction started for upload id" + fileUploaded.getUploadId());
+        log.info("Extraction started for upload id" + fileUploaded.getIndexingJobId());
         openFile(fileUploaded.getUploadedFilePath())
-                .flatMap(is -> this.handleUnarchive(fileUploaded.getUploadId(), is))
-                .doOnError(error -> log.error("Unarchive failed for id" + fileUploaded.getUploadId(), error))
-                .subscribe(unarchived -> log.info("Unarchived files: " + Arrays.toString(unarchived.toArray()) + "for upload id" + fileUploaded.getUploadId()));
+                .flatMap(is -> this.handleUnarchive(fileUploaded.getIndexingJobId(), is))
+                .doOnError(error -> log.error("Unarchive failed for id" + fileUploaded.getIndexingJobId(), error))
+                .subscribe(unarchived -> log.info("Unarchived files: " + Arrays.toString(unarchived.toArray()) + "for upload id" + fileUploaded.getIndexingJobId()));
 
     }
 
@@ -40,9 +40,9 @@ public class ExtractService {
         }
     }
 
-    private Mono<List<String>> handleUnarchive(UploadId uploadId, InputStream is) {
+    private Mono<List<String>> handleUnarchive(IndexingJobId indexingJobId, InputStream is) {
         try {
-            Path extractionPath = fileService.createDirForExtraction(uploadId);
+            Path extractionPath = fileService.createDirForExtraction(indexingJobId);
             return Mono.just(archiveHandler.probeContentAndUnarchive(extractionPath, is));
         } catch (IOException | ArchiveHandlerException e) {
             return Mono.error(e);
