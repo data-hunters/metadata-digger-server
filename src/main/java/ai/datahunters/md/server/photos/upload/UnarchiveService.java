@@ -1,5 +1,7 @@
 package ai.datahunters.md.server.photos.upload;
 
+import ai.datahunters.md.server.photos.upload.filesystem.FileService;
+import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,16 +15,19 @@ import java.util.List;
 @Component
 public class UnarchiveService {
     private ArchiveHandler archiveHandler;
+    private FileService fileService;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public UnarchiveService(ArchiveHandler archiveHandler) {
+    public UnarchiveService(ArchiveHandler archiveHandler, FileService fileService) {
         this.archiveHandler = archiveHandler;
+        this.fileService = fileService;
     }
 
     public void unarchiveUploadedFile(FileUploaded fileUploaded) {
         logger.info("Extraction started for upload id" + fileUploaded.getUploadId());
         openFile(fileUploaded.getUploadedFilePath())
-                .flatMap(this::handleUnarchive)
+                .flatMap(is -> this.handleUnarchive(fileUploaded.getUploadId(), is))
                 .doOnError(error -> logger.error("Unarchive failed for id" + fileUploaded.getUploadId(), error))
                 .subscribe(unarchived -> logger.info("Unarchived files: " + Arrays.toString(unarchived.toArray()) + "for upload id" + fileUploaded.getUploadId()));
 
@@ -36,9 +41,10 @@ public class UnarchiveService {
         }
     }
 
-    private Mono<List<String>> handleUnarchive(InputStream is) {
+    private Mono<List<String>> handleUnarchive(UploadId uploadId, InputStream is) {
         try {
-            return Mono.just(archiveHandler.probeContentAndUnarchive(is));
+            Path extractionPath = fileService.createDirForExtraction(uploadId);
+            return Mono.just(archiveHandler.probeContentAndUnarchive(extractionPath, is));
         } catch (IOException | ArchiveHandlerException e) {
             return Mono.error(e);
         }

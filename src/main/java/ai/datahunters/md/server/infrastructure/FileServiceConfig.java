@@ -15,7 +15,7 @@ public class FileServiceConfig {
     private String directoryName;
 
     @Bean
-    public FileService service() throws IOException {
+    public FileService fileService() throws IOException {
         return new FileServiceImpl(Paths.get(directoryName));
     }
 }

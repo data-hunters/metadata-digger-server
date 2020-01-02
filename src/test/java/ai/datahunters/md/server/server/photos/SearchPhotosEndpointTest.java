@@ -3,6 +3,7 @@ package ai.datahunters.md.server.server.photos;
 import ai.datahunters.md.server.photos.search.PhotosRepository;
 import ai.datahunters.md.server.photos.search.json.SearchRequest;
 import ai.datahunters.md.server.photos.search.solr.PhotoEntity;
+import ai.datahunters.md.server.server.testutils.IOHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -56,11 +53,8 @@ public class SearchPhotosEndpointTest {
         Page<PhotoEntity> page = new PageImpl<>(Collections.singletonList(photo));
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
-        Path expectedResponseFile = Paths.get(
-                getClass().getClassLoader().getResource("photosendpointtest/expected_non_empty_response.json").getPath()
-        );
+        String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/expected_non_empty_response.json");
 
-        String expectedResponse = new String(Files.readAllBytes(expectedResponseFile), StandardCharsets.UTF_8);
         webTestClient
                 // Create a GET request to test an endpoint
                 .post()
@@ -86,11 +80,7 @@ public class SearchPhotosEndpointTest {
         Page<PhotoEntity> page = new PageImpl<>(Collections.emptyList());
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
-        Path expectedResponseFile = Paths.get(
-                getClass().getClassLoader().getResource("photosendpointtest/expected_empty_response.json").getPath()
-        );
-
-        String expectedResponse = new String(Files.readAllBytes(expectedResponseFile), StandardCharsets.UTF_8);
+        String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/expected_empty_response.json");
         webTestClient
                 // Create a GET request to test an endpoint
                 .post()

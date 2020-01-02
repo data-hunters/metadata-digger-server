@@ -10,7 +10,7 @@ public class JsonUtils {
 
     public static void verifyJsonOutput(String receivedResponse, String expectedResponse) {
         try {
-            Assert.assertEquals(mapper.readTree(receivedResponse), mapper.readTree(expectedResponse));
+            Assert.assertEquals(mapper.readTree(expectedResponse), mapper.readTree(receivedResponse));
         } catch (JsonProcessingException e) {
             Assert.fail(e.getMessage());
         }

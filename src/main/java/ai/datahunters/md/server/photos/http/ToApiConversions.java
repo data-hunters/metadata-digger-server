@@ -25,7 +25,7 @@ public class ToApiConversions {
     }
 
     public static UploadResponse responseFromUploadResult(UploadResult result) {
-        return new UploadResponse(result.getUploadId());
+        return new UploadResponse(result.getUploadId().getId());
     }
 
     private static Photo toApiPhoto(PhotoEntity entity) {

@@ -1,7 +1,9 @@
 package ai.datahunters.md.server.server.photos;
 
-import ai.datahunters.md.server.photos.upload.ArchiveHandler;
 import ai.datahunters.md.server.photos.upload.filesystem.FileService;
+import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
+import ai.datahunters.md.server.photos.upload.uploadid.UploadIdFactory;
+import ai.datahunters.md.server.server.testutils.IOHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
 
 import static ai.datahunters.md.server.server.testutils.IOHelper.createTestDir;
+import static ai.datahunters.md.server.server.testutils.IOHelper.createTestFile;
 import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutput;
 import static org.mockito.BDDMockito.given;
 
@@ -28,19 +31,25 @@ public class UploadPhotosEndpointTest {
     @Autowired
     private WebTestClient webTestClient;
 
+    private UploadId uploadId = new UploadId(UUID.fromString("4b858941-f2fb-4d9b-a9cc-42c104e4458b"));
+
+    @MockBean
+    private UploadIdFactory uploadIdFactory;
+
     @MockBean
     private FileService service;
-    private ArchiveHandler archiveHandler = new ArchiveHandler(service);
 
     @Test
     public void uploadPhotos() throws IOException {
 
         Path testDir = createTestDir();
-        Path expectedPath = Files.createTempFile("prefix", "suffix");
+        Path uploadTempFile = createTestFile();
 
-        String expectedResponse = "{ \"uploaded_files\": [ \"" + expectedPath.toString() + "\"] }";
+        String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/upload_response.json");
 
-        given(service.createDirForExtraction()).willReturn(testDir);
+        given(uploadIdFactory.build()).willReturn(uploadId);
+        given(service.createDirForExtraction(uploadId)).willReturn(testDir);
+        given(service.createFileForUpload(uploadId)).willReturn(uploadTempFile);
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", new ClassPathResource("uploadendpointtest/MZIP.zip"));
