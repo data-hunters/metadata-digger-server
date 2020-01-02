@@ -3,6 +3,7 @@ package ai.datahunters.md.server.photos.http;
 import ai.datahunters.md.server.photos.search.json.Photo;
 import ai.datahunters.md.server.photos.search.json.SearchResponse;
 import ai.datahunters.md.server.photos.search.solr.PhotoEntity;
+import ai.datahunters.md.server.photos.upload.UploadResult;
 import ai.datahunters.md.server.photos.upload.json.UploadResponse;
 import org.springframework.data.domain.Page;
 
@@ -23,8 +24,8 @@ public class ToApiConversions {
                 .build();
     }
 
-    public static UploadResponse responseFromUploadedFiles(List<String> uploadedFiles) {
-        return new UploadResponse(uploadedFiles);
+    public static UploadResponse responseFromUploadResult(UploadResult result) {
+        return new UploadResponse(result.getUploadId().getId());
     }
 
     private static Photo toApiPhoto(PhotoEntity entity) {

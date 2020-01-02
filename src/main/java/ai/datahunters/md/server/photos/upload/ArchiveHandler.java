@@ -1,6 +1,5 @@
 package ai.datahunters.md.server.photos.upload;
 
-import ai.datahunters.md.server.photos.upload.filesystem.FileService;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -10,7 +9,6 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
@@ -22,12 +20,6 @@ import java.util.List;
 
 @Service
 public class ArchiveHandler {
-
-    public ArchiveHandler(@Value("${dirForUploadedFiles}") Path parentDirForFiles, FileService fileService) {
-        this.parentDirForFiles = parentDirForFiles;
-        this.fileService = fileService;
-    }
-
     private static final String GTAR = "application/x-gtar";
     private static final String TAR = "application/x-tar";
     private static final String ZIP = "application/zip";
@@ -37,18 +29,15 @@ public class ArchiveHandler {
     private static final String INVALID_FILE_MSG = "Use valid ZIP (*.zip), GZIP (*.tar.gz), XZ (*.tar.xz), BZIP2 (*.tar.bz2) " +
             "or uncompressed archive (*.tar)";
 
-    private Path parentDirForFiles;
-    private FileService fileService;
-
     Tika tika = new Tika();
 
-    public List<String> probeContentAndUnarchive(InputStream in) throws IOException, ArchiveHandlerException {
+    public List<String> probeContentAndUnarchive(Path outputDirectory, InputStream in) throws IOException, ArchiveHandlerException {
         try {
             String type = tika.detect(in);
             if (type.equals(TAR) || type.equals(GTAR) || type.equals(ZIP)) {
-                return detectArchiver(in);
+                return detectArchiver(outputDirectory, in);
             } else if (type.equals(GZ) || type.equals(XZ) || type.equals(BZ2)) {
-                return detectCompressor(in);
+                return detectCompressor(outputDirectory, in);
             } else {
                 throw new ArchiveHandlerException("Unsupported file type. " + INVALID_FILE_MSG);
             }
@@ -59,31 +48,21 @@ public class ArchiveHandler {
         }
     }
 
-    private List<String> detectCompressor(InputStream in) throws CompressorException, ArchiveException, IOException {
-        return detectArchiver(new CompressorStreamFactory().createCompressorInputStream(in));
+    private List<String> detectCompressor(Path outputDirectory, InputStream in) throws CompressorException, ArchiveException, IOException {
+        return detectArchiver(outputDirectory, new CompressorStreamFactory().createCompressorInputStream(in));
     }
 
-    private List<String> detectArchiver(InputStream in) throws ArchiveException, IOException {
-        return extract(new ArchiveStreamFactory().createArchiveInputStream(new BufferedInputStream(in)));
+    private List<String> detectArchiver(Path outputDirectory, InputStream in) throws ArchiveException, IOException {
+        return extract(outputDirectory, new ArchiveStreamFactory().createArchiveInputStream(new BufferedInputStream(in)));
     }
 
-    private List<String> extract(ArchiveInputStream archive) throws IOException {
+    private List<String> extract(Path extractionDir, ArchiveInputStream archive) throws IOException {
         List<String> uploadedFilesList = new ArrayList<>();
         ArchiveEntry entry;
 
-        Path extractionDir = fileService.createDirForExtraction(parentDirForFiles);
-        try {
-            while ((entry = archive.getNextEntry()) != null) {
-                IOUtils.copy(archive, FileUtils.openOutputStream(extractionDir.resolve(entry.getName()).toFile()));
-                uploadedFilesList.add(entry.getName());
-            }
-        } catch (IOException e) {
-            try {
-                FileUtils.deleteDirectory(extractionDir.toFile());
-            } catch (IOException ex) {
-                throw new IOException("I/O exception while extracting. Cleanup unsuccessful", e);
-            }
-            throw new IOException("I/O exception while writing new files. Extraction failed", e);
+        while ((entry = archive.getNextEntry()) != null) {
+            IOUtils.copy(archive, FileUtils.openOutputStream(extractionDir.resolve(entry.getName()).toFile()));
+            uploadedFilesList.add(entry.getName());
         }
         return uploadedFilesList;
     }
