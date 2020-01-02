@@ -14,11 +14,11 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class ExtractServiceService {
+public class ExtractService {
     private ArchiveHandler archiveHandler;
     private FileService fileService;
 
-    public ExtractServiceService(ArchiveHandler archiveHandler, FileService fileService) {
+    public ExtractService(ArchiveHandler archiveHandler, FileService fileService) {
         this.archiveHandler = archiveHandler;
         this.fileService = fileService;
     }
