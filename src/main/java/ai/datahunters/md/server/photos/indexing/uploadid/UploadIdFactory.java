@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.photos.upload.uploadid;
+package ai.datahunters.md.server.photos.indexing.uploadid;
 
 public interface UploadIdFactory {
     UploadId build();

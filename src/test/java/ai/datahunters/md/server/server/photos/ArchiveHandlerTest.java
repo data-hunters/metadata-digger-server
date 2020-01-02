@@ -1,7 +1,7 @@
 package ai.datahunters.md.server.server.photos;
 
-import ai.datahunters.md.server.photos.upload.ArchiveHandler;
-import ai.datahunters.md.server.photos.upload.ArchiveHandlerException;
+import ai.datahunters.md.server.photos.indexing.extract.ArchiveHandler;
+import ai.datahunters.md.server.photos.indexing.extract.ArchiveHandlerException;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 

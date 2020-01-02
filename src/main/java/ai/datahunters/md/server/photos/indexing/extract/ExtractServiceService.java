@@ -1,7 +1,8 @@
-package ai.datahunters.md.server.photos.upload;
+package ai.datahunters.md.server.photos.indexing.extract;
 
-import ai.datahunters.md.server.photos.upload.filesystem.FileService;
-import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
+import ai.datahunters.md.server.photos.indexing.upload.FileUploaded;
+import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class UnarchiveService {
+public class ExtractServiceService {
     private ArchiveHandler archiveHandler;
     private FileService fileService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public UnarchiveService(ArchiveHandler archiveHandler, FileService fileService) {
+    public ExtractServiceService(ArchiveHandler archiveHandler, FileService fileService) {
         this.archiveHandler = archiveHandler;
         this.fileService = fileService;
     }

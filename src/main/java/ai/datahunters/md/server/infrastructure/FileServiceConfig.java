@@ -1,7 +1,7 @@
 package ai.datahunters.md.server.infrastructure;
 
-import ai.datahunters.md.server.photos.upload.filesystem.FileService;
-import ai.datahunters.md.server.photos.upload.filesystem.FileServiceImpl;
+import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
+import ai.datahunters.md.server.photos.indexing.filesystem.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

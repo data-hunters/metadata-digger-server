@@ -1,8 +1,8 @@
 package ai.datahunters.md.server.server.photos;
 
-import ai.datahunters.md.server.photos.upload.filesystem.FileService;
-import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
-import ai.datahunters.md.server.photos.upload.uploadid.UploadIdFactory;
+import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
+import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.uploadid.UploadIdFactory;
 import ai.datahunters.md.server.server.testutils.IOHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UploadPhotosEndpointTest {
+public class StartIndexingEndpointTest {
     @Autowired
     private WebTestClient webTestClient;
 
@@ -56,7 +56,7 @@ public class UploadPhotosEndpointTest {
 
         webTestClient
                 .post()
-                .uri("/api/v1/upload")
+                .uri("/api/v1/start-indexing")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .exchange()

@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.photos.upload;
+package ai.datahunters.md.server.photos.indexing.extract;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
