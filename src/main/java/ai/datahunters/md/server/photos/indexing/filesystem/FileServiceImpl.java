@@ -1,6 +1,6 @@
-package ai.datahunters.md.server.photos.upload.filesystem;
+package ai.datahunters.md.server.photos.indexing.filesystem;
 
-import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
 
 import javax.annotation.processing.FilerException;
 import java.io.IOException;

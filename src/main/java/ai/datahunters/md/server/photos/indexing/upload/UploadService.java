@@ -1,9 +1,8 @@
-package ai.datahunters.md.server.photos.upload;
+package ai.datahunters.md.server.photos.indexing.upload;
 
-import ai.datahunters.md.server.photos.upload.filesystem.FileService;
-import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ai.datahunters.md.server.photos.indexing.filesystem.FileService;
+import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
@@ -16,25 +15,25 @@ import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class UploadService {
     public UploadService(FileService fileService) {
         this.fileService = fileService;
     }
 
     private FileService fileService;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Mono<UploadResult> handleUpload(UploadId uploadId, FilePart filePart) {
-        logger.info("Starting upload for id" + uploadId);
+    public Mono<FileUploaded> handleUpload(UploadId uploadId, FilePart filePart) {
+        log.info("Starting upload for id" + uploadId);
         try {
             Path tempFile = fileService.createFileForUpload(uploadId);
 
             AsynchronousFileChannel channel = AsynchronousFileChannel.open(tempFile, StandardOpenOption.WRITE);
 
             return DataBufferUtils.write(filePart.content(), channel, 0)
-                    .doOnComplete(() -> logger.info("Upload " + uploadId + " completed"))
+                    .doOnComplete(() -> log.info("Upload " + uploadId + " completed"))
                     .collect(Collectors.counting())
-                    .map(count -> new UploadResult(uploadId, tempFile));
+                    .map(count -> new FileUploaded(uploadId, tempFile));
         } catch (IOException e) {
             return Mono.error(e);
         }

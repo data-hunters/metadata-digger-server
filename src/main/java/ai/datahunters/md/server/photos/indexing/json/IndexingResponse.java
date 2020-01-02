@@ -1,4 +1,4 @@
-package ai.datahunters.md.server.photos.upload.json;
+package ai.datahunters.md.server.photos.indexing.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
@@ -6,7 +6,7 @@ import lombok.Value;
 import java.util.UUID;
 
 @Value
-public class UploadResponse {
+public class IndexingResponse {
     @JsonProperty("upload_id")
     UUID uploadId;
 }

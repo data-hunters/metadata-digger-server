@@ -1,6 +1,6 @@
-package ai.datahunters.md.server.photos.upload;
+package ai.datahunters.md.server.photos.indexing.upload;
 
-import ai.datahunters.md.server.photos.upload.uploadid.UploadId;
+import ai.datahunters.md.server.photos.indexing.uploadid.UploadId;
 import lombok.Value;
 
 import java.nio.file.Path;
