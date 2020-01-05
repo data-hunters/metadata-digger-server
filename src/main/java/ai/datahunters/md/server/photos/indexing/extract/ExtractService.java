@@ -5,11 +5,11 @@ import ai.datahunters.md.server.photos.indexing.upload.FileUploaded;
 import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -24,28 +24,31 @@ public class ExtractService {
     }
 
     public Mono<FilesExtracted> extractUploadedFile(FileUploaded fileUploaded) {
-        log.info("Extraction started for upload id" + fileUploaded.getIndexingJobId());
-        return openUploadedFile(fileUploaded.getUploadedFilePath())
-                .flatMap(is -> this.handleUnarchive(fileUploaded.getIndexingJobId(), is));
-
+        return openUploadedFile(fileUploaded)
+                .flatMap(is -> this.handleUnarchive(fileUploaded.getIndexingJobId(), is))
+                .doOnError(error -> log.error("Unarchive failed for id" + fileUploaded.getIndexingJobId(), error))
+                .doOnSuccess(unarchived -> log.info("Unarchived files: " + Arrays.toString(unarchived.getExtractedFilesPaths().toArray()) + "for upload id" + fileUploaded.getIndexingJobId()));
     }
 
-    private Mono<InputStream> openUploadedFile(Path path) {
-        try {
-            return Mono.just(new BufferedInputStream(new FileInputStream(path.toFile())));
-        } catch (FileNotFoundException e) {
-            return Mono.error(e);
-        }
+    private Mono<InputStream> openUploadedFile(FileUploaded fileUploaded) {
+        return Mono.defer(() -> {
+            try {
+                log.info("Extraction started for upload id" + fileUploaded.getIndexingJobId());
+                return Mono.just(new BufferedInputStream(new FileInputStream(fileUploaded.getUploadedFilePath().toFile())));
+            } catch (FileNotFoundException e) {
+                return Mono.error(e);
+            }
+        });
     }
 
     private Mono<FilesExtracted> handleUnarchive(IndexingJobId indexingJobId, InputStream is) {
         return Mono.defer(() -> {
-                    try {
-                        Path extractionPath = fileService.createDirForExtraction(indexingJobId);
-                        List<Path> extractedFilesPaths = archiveHandler.probeContentAndUnarchive(extractionPath, is);
-                        return Mono.just(new FilesExtracted(indexingJobId, extractedFilesPaths));
-                    } catch (IOException | ArchiveHandlerException e) {
-                        throw Exceptions.propagate(e);
+            try {
+                Path extractionPath = fileService.createDirForExtraction(indexingJobId);
+                List<Path> extractedFilesPaths = archiveHandler.probeContentAndUnarchive(extractionPath, is);
+                return Mono.just(new FilesExtracted(indexingJobId, extractedFilesPaths));
+            } catch (IOException | ArchiveHandlerException e) {
+                return Mono.error(e);
                     }
                 }
 

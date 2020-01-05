@@ -9,9 +9,12 @@ import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
 import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.ReplayProcessor;
 
-import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class IndexingService {
@@ -24,18 +27,34 @@ public class IndexingService {
     private UploadService uploadService;
     private ExtractService extractService;
     private IndexingJobIdGenerator indexingJobIdGenerator;
+    private ConcurrentHashMap<IndexingJobId, ReplayProcessor<IndexingEvent>> eventStreams = new ConcurrentHashMap<>();
 
     public Mono<IndexingResponse> startIndexing(Mono<FilePart> file) {
         IndexingJobId indexingJobId = indexingJobIdGenerator.build();
         return file.flatMap(filePart -> uploadService.handleUpload(indexingJobId, filePart))
                 .onErrorMap(error -> error)
-                .doOnSuccess(fileUploaded -> extractService.extractUploadedFile(fileUploaded))
+                .doOnSuccess(this::doOnUploaded)
                 .map(ToApiConversions::responseFromUploadResult);
     }
 
-    public void doOnUploaded(FileUploaded fileUploaded) {
-        extractService.extractUploadedFile(fileUploaded)
-                .doOnError(error -> log.error("Unarchive failed for id" + fileUploaded.getIndexingJobId(), error))
-                .subscribe(unarchived -> log.info("Unarchived files: " + Arrays.toString(unarchived.getExtractedFilesPaths().toArray()) + "for upload id" + fileUploaded.getIndexingJobId()));
+    public Flux<IndexingEvent> getIndexingEvents(IndexingJobId jobId) {
+        return getProcessor(jobId);
+    }
+
+    private boolean updateIndexingEvents(IndexingEvent event) {
+        getProcessor(event.getIndexingJobId()).sink().next(event);
+        return true; // to convince fromCallable to work
+    }
+
+    private ReplayProcessor<IndexingEvent> getProcessor(IndexingJobId jobId) {
+        ReplayProcessor<IndexingEvent> processor = Optional.ofNullable(eventStreams.get(jobId)).orElseGet(ReplayProcessor::create);
+        eventStreams.putIfAbsent(jobId, processor);
+        return processor;
+    }
+
+    private void doOnUploaded(FileUploaded fileUploaded) {
+        Mono.fromCallable(() -> updateIndexingEvents(fileUploaded))
+                .flatMap(ignore -> extractService.extractUploadedFile(fileUploaded))
+                .subscribe(last -> log.info("Indexing finished for job id" + last.getIndexingJobId()));
     }
 }
