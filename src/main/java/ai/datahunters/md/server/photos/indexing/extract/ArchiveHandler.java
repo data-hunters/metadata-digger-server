@@ -31,7 +31,7 @@ public class ArchiveHandler {
 
     Tika tika = new Tika();
 
-    public List<String> probeContentAndUnarchive(Path outputDirectory, InputStream in) throws IOException, ArchiveHandlerException {
+    public List<Path> probeContentAndUnarchive(Path outputDirectory, InputStream in) throws IOException, ArchiveHandlerException {
         try {
             String type = tika.detect(in);
             if (type.equals(TAR) || type.equals(GTAR) || type.equals(ZIP)) {
@@ -48,21 +48,22 @@ public class ArchiveHandler {
         }
     }
 
-    private List<String> detectCompressor(Path outputDirectory, InputStream in) throws CompressorException, ArchiveException, IOException {
+    private List<Path> detectCompressor(Path outputDirectory, InputStream in) throws CompressorException, ArchiveException, IOException {
         return detectArchiver(outputDirectory, new CompressorStreamFactory().createCompressorInputStream(in));
     }
 
-    private List<String> detectArchiver(Path outputDirectory, InputStream in) throws ArchiveException, IOException {
+    private List<Path> detectArchiver(Path outputDirectory, InputStream in) throws ArchiveException, IOException {
         return extract(outputDirectory, new ArchiveStreamFactory().createArchiveInputStream(new BufferedInputStream(in)));
     }
 
-    private List<String> extract(Path extractionDir, ArchiveInputStream archive) throws IOException {
-        List<String> uploadedFilesList = new ArrayList<>();
+    private List<Path> extract(Path extractionDir, ArchiveInputStream archive) throws IOException {
+        List<Path> uploadedFilesList = new ArrayList<>();
         ArchiveEntry entry;
 
         while ((entry = archive.getNextEntry()) != null) {
-            IOUtils.copy(archive, FileUtils.openOutputStream(extractionDir.resolve(entry.getName()).toFile()));
-            uploadedFilesList.add(entry.getName());
+            Path extractedFilePath = extractionDir.resolve(entry.getName());
+            IOUtils.copy(archive, FileUtils.openOutputStream(extractedFilePath.toFile()));
+            uploadedFilesList.add(extractedFilePath);
         }
         return uploadedFilesList;
     }

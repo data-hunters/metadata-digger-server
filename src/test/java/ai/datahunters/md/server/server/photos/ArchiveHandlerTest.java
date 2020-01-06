@@ -24,7 +24,7 @@ public class ArchiveHandlerTest {
     @Test
     public void fileRecognitionTest() throws IOException, ArchiveHandlerException {
         Path testPath = createTestDir();
-        List<String> expected = Collections.singletonList("smile.png");
+        List<Path> expected = Collections.singletonList(testPath.resolve("smile.png"));
 
         Assertions.assertThrows(ArchiveHandlerException.class,
                 () -> archiveHandler.probeContentAndUnarchive(testPath, openArchive(TEST_DIR + "test_file.zip")));
@@ -59,7 +59,7 @@ public class ArchiveHandlerTest {
     @Test
     public void multipleFilesExtraction() throws IOException, ArchiveHandlerException {
         Path testPath = createTestDir();
-        List<String> expected = Arrays.asList("smile.png", "happy.png");
+        List<Path> expected = Arrays.asList(testPath.resolve("smile.png"), testPath.resolve("happy.png"));
 
         Assertions.assertEquals(expected,
                 archiveHandler.probeContentAndUnarchive(testPath, openArchive(TEST_DIR + "MZIP.zip")));

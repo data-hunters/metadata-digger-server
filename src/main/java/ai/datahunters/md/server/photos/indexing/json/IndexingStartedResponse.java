@@ -6,7 +6,7 @@ import lombok.Value;
 import java.util.UUID;
 
 @Value
-public class IndexingResponse {
-    @JsonProperty("upload_id")
-    UUID uploadId;
+public class IndexingStartedResponse {
+    @JsonProperty("indexing_job_id")
+    UUID indexingJobId;
 }
