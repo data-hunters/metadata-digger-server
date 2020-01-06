@@ -2,7 +2,7 @@ package ai.datahunters.md.server.photos.indexing;
 
 import ai.datahunters.md.server.photos.http.ToApiConversions;
 import ai.datahunters.md.server.photos.indexing.extract.ExtractService;
-import ai.datahunters.md.server.photos.indexing.json.IndexingResponse;
+import ai.datahunters.md.server.photos.indexing.json.IndexingStartedResponse;
 import ai.datahunters.md.server.photos.indexing.upload.FileUploaded;
 import ai.datahunters.md.server.photos.indexing.upload.UploadService;
 import ai.datahunters.md.server.photos.indexing.uploadid.IndexingJobId;
@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.ReplayProcessor;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,7 +30,7 @@ public class IndexingService {
     private IndexingJobIdGenerator indexingJobIdGenerator;
     private ConcurrentHashMap<IndexingJobId, ReplayProcessor<IndexingEvent>> eventStreams = new ConcurrentHashMap<>();
 
-    public Mono<IndexingResponse> startIndexing(Mono<FilePart> file) {
+    public Mono<IndexingStartedResponse> startIndexing(Mono<FilePart> file) {
         IndexingJobId indexingJobId = indexingJobIdGenerator.build();
         return file.flatMap(filePart -> uploadService.handleUpload(indexingJobId, filePart))
                 .onErrorMap(error -> error)
@@ -41,9 +42,10 @@ public class IndexingService {
         return getProcessor(jobId);
     }
 
-    private boolean updateIndexingEvents(IndexingEvent event) {
+    private IndexingEvent updateIndexingEvents(IndexingEvent event) {
+        log.info("Updating indexing state with event" + event);
         getProcessor(event.getIndexingJobId()).sink().next(event);
-        return true; // to convince fromCallable to work
+        return event; // to convince fromCallable to work
     }
 
     private ReplayProcessor<IndexingEvent> getProcessor(IndexingJobId jobId) {
@@ -53,8 +55,10 @@ public class IndexingService {
     }
 
     private void doOnUploaded(FileUploaded fileUploaded) {
-        Mono.fromCallable(() -> updateIndexingEvents(fileUploaded))
+        Mono.delay(Duration.ofSeconds(10)).flatMap(i -> Mono.fromCallable(() -> updateIndexingEvents(fileUploaded)))
+
                 .flatMap(ignore -> extractService.extractUploadedFile(fileUploaded))
+                .map(this::updateIndexingEvents)
                 .subscribe(last -> log.info("Indexing finished for job id" + last.getIndexingJobId()));
     }
 }
