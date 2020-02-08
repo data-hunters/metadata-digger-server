@@ -19,6 +19,8 @@ public class Photo {
     private List<String> directoryNames;
     @JsonProperty("tag_names")
     private List<String> tagNames;
+    @JsonProperty("labels")
+    private List<String> labels;
     @JsonProperty("meta_data")
     private Map<String, List<String>> metaData;
 }

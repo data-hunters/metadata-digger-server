@@ -27,6 +27,8 @@ public class PhotoEntity {
     List<String> directoryNames;
     private @Indexed(name = "tag_names")
     List<String> tagNames;
+    private @Indexed(name = "labels")
+    List<String> labels;
     private @Dynamic
     @Field("md_*")
     Map<String, List<String>> metaData;

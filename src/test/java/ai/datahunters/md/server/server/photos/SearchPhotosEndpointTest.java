@@ -25,7 +25,6 @@ import static ai.datahunters.md.server.server.testutils.JsonUtils.verifyJsonOutp
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
-//  We create a `@SpringBootTest`, starting an actual server on a `RANDOM_PORT`
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SearchPhotosEndpointTest {
 
@@ -47,6 +46,7 @@ public class SearchPhotosEndpointTest {
                 .fileType("file type")
                 .directoryNames(Collections.singletonList("dir"))
                 .tagNames(Collections.singletonList("tag"))
+                .labels(Collections.singletonList("label"))
                 .metaData(prepareDynamicFields())
                 .build();
 
