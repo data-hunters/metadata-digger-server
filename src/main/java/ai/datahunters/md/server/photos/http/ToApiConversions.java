@@ -81,6 +81,7 @@ public class ToApiConversions {
                 entity.getFileType(),
                 entity.getDirectoryNames(),
                 entity.getTagNames(),
+                entity.getLabels(),
                 entity.getMetaData()
         );
     }

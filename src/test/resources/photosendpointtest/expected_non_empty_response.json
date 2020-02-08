@@ -11,6 +11,9 @@
       "tag_names": [
         "tag"
       ],
+      "labels": [
+        "label"
+      ],
       "meta_data": {
         "dynamic_field_1": [
           "el11",
