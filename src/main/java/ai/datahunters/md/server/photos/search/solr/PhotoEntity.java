@@ -38,7 +38,7 @@ public class PhotoEntity {
     List<String> labels;
 
     private @Indexed(name = "thumb_small")
-    String thumbnail;
+    byte[] thumbnail;
 
     private @Indexed(name = "hash_crc32")
     Optional<String> hashCrc32 = Optional.empty();
