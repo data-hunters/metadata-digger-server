@@ -82,7 +82,14 @@ public class ToApiConversions {
                 entity.getDirectoryNames(),
                 entity.getTagNames(),
                 entity.getLabels(),
-                entity.getMetaData()
+                entity.getMetaData(),
+                entity.getHashCrc32(),
+                entity.getHashMd5(),
+                entity.getHashSha1(),
+                entity.getHashSha224(),
+                entity.getHashSha256(),
+                entity.getHashSha284(),
+                entity.getHashSha512()
         );
     }
 }
