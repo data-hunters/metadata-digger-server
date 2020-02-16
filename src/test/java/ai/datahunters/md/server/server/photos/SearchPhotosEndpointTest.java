@@ -54,22 +54,11 @@ public class SearchPhotosEndpointTest {
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
         String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/expected_non_empty_response.json");
+        String request = "{\"text_query\": \"test\"}";
 
-        webTestClient
-                // Create a GET request to test an endpoint
-                .post()
-                .uri("/api/v1/photos")
-                .body(BodyInserters.fromValue("{\"text_query\": \"test\"}"))
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .consumeWith(respBody ->
-                        verifyJsonOutput(respBody.getResponseBody(), expectedResponse)
-                );
-
+        performRequestAndAssertResponse(request, expectedResponse);
     }
+
 
     @Test
     public void searchByEmptyQuery() throws IOException {
@@ -81,11 +70,24 @@ public class SearchPhotosEndpointTest {
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
         String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/expected_empty_response.json");
+        String request = "{}";
+
+        performRequestAndAssertResponse(request, expectedResponse);
+    }
+
+    Map<String, List<String>> prepareDynamicFields() {
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("dynamic_field_1", Arrays.asList("el11", "el12"));
+        map.put("dynamic_field_2", Arrays.asList("el21", "el22"));
+        return map;
+    }
+
+    private void performRequestAndAssertResponse(String request, String expectedResponse) {
         webTestClient
                 // Create a GET request to test an endpoint
                 .post()
                 .uri("/api/v1/photos")
-                .body(BodyInserters.fromValue("{}"))
+                .body(BodyInserters.fromValue(request))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
@@ -96,10 +98,4 @@ public class SearchPhotosEndpointTest {
                 );
     }
 
-    Map<String, List<String>> prepareDynamicFields() {
-        Map<String, List<String>> map = new HashMap<>();
-        map.put("dynamic_field_1", Arrays.asList("el11", "el12"));
-        map.put("dynamic_field_2", Arrays.asList("el21", "el22"));
-        return map;
-    }
 }
