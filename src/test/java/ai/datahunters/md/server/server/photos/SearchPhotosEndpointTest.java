@@ -47,6 +47,7 @@ public class SearchPhotosEndpointTest {
                 .directoryNames(Collections.singletonList("dir"))
                 .tagNames(Collections.singletonList("tag"))
                 .labels(Collections.singletonList("label"))
+                .thumbnail("image_in_base64")
                 .metaData(prepareDynamicFields())
                 .build();
 
