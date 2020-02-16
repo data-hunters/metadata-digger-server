@@ -18,6 +18,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -47,7 +48,7 @@ public class SearchPhotosEndpointTest {
                 .directoryNames(Collections.singletonList("dir"))
                 .tagNames(Collections.singletonList("tag"))
                 .labels(Collections.singletonList("label"))
-                .thumbnail("image_in_base64")
+                .thumbnail("image_in_base64".getBytes(StandardCharsets.UTF_8))
                 .metaData(prepareDynamicFields())
                 .build();
 

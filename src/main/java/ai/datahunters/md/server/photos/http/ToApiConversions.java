@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.codec.ServerSentEvent;
 
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -82,7 +83,7 @@ public class ToApiConversions {
                 entity.getDirectoryNames(),
                 entity.getTagNames(),
                 entity.getLabels(),
-                entity.getThumbnail(),
+                Base64.getEncoder().encodeToString(entity.getThumbnail()),
                 entity.getMetaData(),
                 entity.getHashCrc32(),
                 entity.getHashMd5(),
