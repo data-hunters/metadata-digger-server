@@ -12,6 +12,9 @@ Prequisites:
 
 swagger ui should be accessible from http://localhost:8080/swagger-ui.html
 
+if you want to perform full indexing you need to update `application.properties` with path to 
+metadata digger standalone and server output path.
+
 ### Running tests
 
 ```./gradlew test```
