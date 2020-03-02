@@ -10,6 +10,7 @@ import java.nio.file.Path;
 public class FileServiceImpl implements FileService {
     private final String UPLOAD_DIRECTORY_NAME = "upload";
     private final String EXTRACT_DIRECTORY_NAME = "extract";
+
     private Path uploadDir;
     private Path extractionDir;
 

@@ -56,7 +56,6 @@ public class IndexingService {
 
     private void doOnUploaded(FileUploaded fileUploaded) {
         Mono.delay(Duration.ofSeconds(10)).flatMap(i -> Mono.fromCallable(() -> updateIndexingEvents(fileUploaded)))
-
                 .flatMap(ignore -> extractService.extractUploadedFile(fileUploaded))
                 .map(this::updateIndexingEvents)
                 .subscribe(last -> log.info("Indexing finished for job id" + last.getIndexingJobId()));

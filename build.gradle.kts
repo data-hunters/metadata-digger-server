@@ -30,11 +30,13 @@ sonarqube {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	testImplementation("org.springframework.boot:spring-boot-starter-test") {
-		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-	}
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
     implementation("org.apache.commons:commons-compress:1.19")
     implementation("org.apache.tika:tika-core:1.22")
+    implementation("org.zeroturnaround:zt-exec:1.11")
+
     implementation("org.tukaani:xz:1.8")
     testImplementation("commons-codec:commons-codec:1.13")
 
