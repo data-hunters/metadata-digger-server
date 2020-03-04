@@ -3,10 +3,7 @@ package ai.datahunters.md.server.photos.search.solr;
 import ai.datahunters.md.server.photos.search.PhotosRepository;
 import ai.datahunters.md.server.photos.search.json.SearchRequest;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.data.solr.core.query.FacetQuery;
-import org.springframework.data.solr.core.query.SimpleFacetQuery;
-import org.springframework.data.solr.core.query.SimpleQuery;
-import org.springframework.data.solr.core.query.SimpleStringCriteria;
+import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +27,11 @@ public class PhotosRepositorySolrImpl implements PhotosRepository {
     public CompletableFuture<FacetPage<PhotoEntity>> search(SearchRequest searchTerm) {
         String queryString = searchTerm.getTextQuery().orElseGet(() -> "*:*");
         FacetQuery query = new SimpleFacetQuery(new SimpleStringCriteria(queryString));
-
+        if (!searchTerm.getFacets().isEmpty()) {
+            FacetOptions facetOptions = new FacetOptions();
+            searchTerm.getFacets().forEach(field -> query.setFacetOptions(facetOptions.addFacetOnField(field)));
+            query.setFacetOptions(facetOptions);
+        }
         return CompletableFuture.supplyAsync(() ->
                 solrTemplate.queryForFacetPage(collectionName, query, PhotoEntity.class)
         );
