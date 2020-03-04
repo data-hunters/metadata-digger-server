@@ -10,7 +10,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @JsonDeserialize(builder = SearchRequest.SearchRequestBuilder.class)
 @Builder
@@ -23,6 +25,10 @@ public class SearchRequest {
     @JsonProperty(value = "text_query")
     @Builder.Default
     private final Optional<String> textQuery = Optional.empty();
+
+    @JsonProperty(value = "facets")
+    @Builder.Default
+    private final Set<String> facets = Collections.emptySet();
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class SearchRequestBuilder {

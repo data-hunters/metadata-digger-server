@@ -8,15 +8,20 @@ import ai.datahunters.md.server.photos.indexing.json.IndexingStartedResponse;
 import ai.datahunters.md.server.photos.indexing.upload.FileUploaded;
 import ai.datahunters.md.server.photos.search.json.Photo;
 import ai.datahunters.md.server.photos.search.json.SearchResponse;
+import ai.datahunters.md.server.photos.search.json.response.FacetFieldResult;
 import ai.datahunters.md.server.photos.search.solr.PhotoEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.data.domain.Page;
+import org.springframework.data.solr.core.query.Field;
+import org.springframework.data.solr.core.query.result.CountEntry;
+import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.FacetQueryResult;
 import org.springframework.http.codec.ServerSentEvent;
 
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,16 +29,28 @@ public class ToApiConversions {
     private ToApiConversions() {
     }
 
-    public static SearchResponse responseFromPhotos(Page<PhotoEntity> modelPhotos) {
-        List<Photo> apiPhotos = modelPhotos.stream().map(ToApiConversions::toApiPhoto).collect(Collectors.toList());
-        int page = modelPhotos.getNumber();
-        long total = modelPhotos.getTotalElements();
+    public static SearchResponse responseFromPhotos(FacetPage<PhotoEntity> resultPage) {
+        List<Photo> apiPhotos = resultPage.stream().map(ToApiConversions::toApiPhoto).collect(Collectors.toList());
+        int page = resultPage.getNumber();
+        long total = resultPage.getTotalElements();
         return SearchResponse.builder()
                 .photos(apiPhotos)
                 .page(page)
                 .total(total)
+                .facets(extractFacetingResults(resultPage))
                 .build();
     }
+
+    private static <T> Map<String, FacetFieldResult> extractFacetingResults(FacetQueryResult<T> result) {
+        return result.getFacetFields().stream()
+                .collect(Collectors.toMap(Field::getName, f -> extractResultsForSingleFacetField(result, f)));
+    }
+
+    private static <T> FacetFieldResult extractResultsForSingleFacetField(FacetQueryResult<T> result, Field field) {
+        Map<String, Long> values = result.getFacetResultPage(field).get().collect(Collectors.toMap(CountEntry::getValue, CountEntry::getValueCount));
+        return new FacetFieldResult(values);
+    }
+
 
     public static IndexingStartedResponse responseFromUploadResult(FileUploaded result) {
         return new IndexingStartedResponse(result.getIndexingJobId().getId());

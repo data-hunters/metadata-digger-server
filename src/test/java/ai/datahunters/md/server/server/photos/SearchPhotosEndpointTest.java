@@ -9,8 +9,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -52,7 +53,7 @@ public class SearchPhotosEndpointTest {
                 .metaData(prepareDynamicFields())
                 .build();
 
-        Page<PhotoEntity> page = new PageImpl<>(Collections.singletonList(photo));
+        FacetPage<PhotoEntity> page = new SolrResultPage<PhotoEntity>(Collections.singletonList(photo), Pageable.unpaged(), 1, 100.0f);
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
         String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/expected_non_empty_response.json");
@@ -68,7 +69,8 @@ public class SearchPhotosEndpointTest {
                 .textQuery(Optional.empty())
                 .build();
 
-        Page<PhotoEntity> page = new PageImpl<>(Collections.emptyList());
+        FacetPage<PhotoEntity> page = new SolrResultPage<PhotoEntity>(Collections.emptyList(), Pageable.unpaged(), 0, 0f);
+
         given(repo.search(expectedRequest)).willReturn(CompletableFuture.completedFuture(page));
 
         String expectedResponse = new IOHelper().readStringFromResource("photosendpointtest/expected_empty_response.json");
