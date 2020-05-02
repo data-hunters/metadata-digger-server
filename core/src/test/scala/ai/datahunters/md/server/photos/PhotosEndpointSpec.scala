@@ -1,13 +1,13 @@
 package ai.datahunters.md.server.photos
 
-import ai.datahunters.md.server.{BaseTest, HttpEndpoint}
-import ai.datahunters.md.server.photos.search.{PhotoEntity, PhotosRepository, SearchError, SearchRequest, SearchResponse}
-import monix.bio.{BIO, Task}
-import org.http4s.{EntityDecoder, Method, Request, Response, Status, Uri}
-import org.http4s.implicits._
-import monix.execution.Scheduler.Implicits.global
 import ai.datahunters.md.server.photos.PhotosEndpointSpec._
+import ai.datahunters.md.server.photos.search._
+import ai.datahunters.md.server.{BaseTest, HttpEndpoint}
 import io.circe.parser._
+import monix.bio.{BIO, Task}
+import monix.execution.Scheduler.Implicits.global
+import org.http4s.implicits._
+import org.http4s.{Method, Request, Response, Status}
 
 class PhotosEndpointSpec extends BaseTest {
   "Photos endpoint" when {
@@ -24,7 +24,12 @@ class PhotosEndpointSpec extends BaseTest {
           tagNames = List("tag"),
           labels = List("label"),
           thumbnail = "aW1hZ2VfaW5fYmFzZTY0",
-          metaData = Map("dynamic_field_1" -> List("el11", "el12"), "dynamic_field_2" -> List("el21", "el22")))
+          metaData = Map(
+            "dynamic_field_1" -> PhotoEntity.MetaDataEntry.TextsEntry(List("el11", "el12")),
+            "dynamic_field_2" -> PhotoEntity.MetaDataEntry.IntEntry(2137),
+            "dynamic_field_3" -> PhotoEntity.MetaDataEntry.FloatEntry(21.37f),
+            "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")
+          ))
 
         val facets = Map("tag_names" -> SearchResponse.FacetField(Map("tag1" -> 102, "tag2" -> 103)))
         val repositoryMock = new PhotosRepository {
@@ -52,44 +57,44 @@ class PhotosEndpointSpec extends BaseTest {
 }
 
 object PhotosEndpointSpec {
-  val json = """{
-               |  "photos": [
-               |    {
-               |      "id": "1234",
-               |      "base_path": "base_path",
-               |      "file_path": "file_path",
-               |      "file_type": "file type",
-               |      "directory_names": [
-               |        "dir"
-               |      ],
-               |      "tag_names": [
-               |        "tag"
-               |      ],
-               |      "labels": [
-               |        "label"
-               |      ],
-               |      "thumbnail": "aW1hZ2VfaW5fYmFzZTY0",
-               |      "meta_data": {
-               |        "dynamic_field_1": [
-               |          "el11",
-               |          "el12"
-               |        ],
-               |        "dynamic_field_2": [
-               |          "el21",
-               |          "el22"
-               |        ]
-               |      }
-               |    }
-               |  ],
-               |  "facets": {
-               |    "tag_names": {
-               |      "results": {
-               |        "tag1": 102,
-               |        "tag2": 103
-               |      }
-               |    }
-               |  },
-               |  "page": 0,
-               |  "total": 1
-               |}""".stripMargin
+  val json: String =
+    """{
+      |  "photos": [
+      |    {
+      |      "id": "1234",
+      |      "base_path": "base_path",
+      |      "file_path": "file_path",
+      |      "file_type": "file type",
+      |      "directory_names": [
+      |        "dir"
+      |      ],
+      |      "tag_names": [
+      |        "tag"
+      |      ],
+      |      "labels": [
+      |        "label"
+      |      ],
+      |      "thumbnail": "aW1hZ2VfaW5fYmFzZTY0",
+      |      "meta_data": {
+      |        "dynamic_field_1": [
+      |          "el11",
+      |          "el12"
+      |        ],
+      |        "dynamic_field_2": 2137,
+      |        "dynamic_field_3": 21.37,
+      |        "dynamic_field_4": "text"
+      |      }
+      |    }
+      |  ],
+      |  "facets": {
+      |    "tag_names": {
+      |      "results": {
+      |        "tag1": 102,
+      |        "tag2": 103
+      |      }
+      |    }
+      |  },
+      |  "page": 0,
+      |  "total": 1
+      |}""".stripMargin
 }
