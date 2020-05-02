@@ -1,10 +1,10 @@
 package ai.datahunters.md.server
 
+import ai.datahunters.md.server.infrastructure.solr.PhotosSolrRepository
 import ai.datahunters.md.server.photos.PhotosEndpoint
-import ai.datahunters.md.server.photos.search.{PhotosRepository, SearchError, SearchRequest, SearchResponse}
 import cats.effect.ExitCode
 import com.typesafe.scalalogging.StrictLogging
-import monix.bio.{BIO, BIOApp, Task, UIO}
+import monix.bio.{BIOApp, Task, UIO}
 
 object Main extends BIOApp with StrictLogging{
   override def run(args: List[String]): UIO[ExitCode] = {
@@ -16,17 +16,17 @@ object Main extends BIOApp with StrictLogging{
   }
 
   def program: Task[Unit] = {
-    val config = HttpEndpoint.Configuration("localhost", 8080)
-    val httpEndpoint = new HttpEndpoint(initPhotosEndpoint)
+    val httpConfig = HttpEndpoint.Configuration("localhost", 8080)
+    val solrConfig = PhotosSolrRepository.Config("http://localhost:8983/solr/")
+
+    val httpEndpoint = new HttpEndpoint(initPhotosEndpoint(solrConfig))
     for {
-      _ <- httpEndpoint.start(config)
+      _ <- httpEndpoint.start(httpConfig)
     } yield ()
   }
 
-  def initPhotosEndpoint: PhotosEndpoint = {
-    val repo = new PhotosRepository {
-      override def search(request: SearchRequest): BIO[SearchError, SearchResponse] = ???
-    }
+  def initPhotosEndpoint(config: PhotosSolrRepository.Config): PhotosEndpoint = {
+    val repo = new PhotosSolrRepository(config)
 
     new PhotosEndpoint(repo)
   }
