@@ -1,18 +1,18 @@
 package ai.datahunters.md.server.photos
 
 import java.io.File
-import java.nio.file.{Files, Path}
+import java.nio.file.{ Files, Path }
 
 import ai.datahunters.md.server.infrastructure.filesystem.LocalFileSystemIndexingStorageService
 import ai.datahunters.md.server.photos.PhotosEndpointSpec._
 import ai.datahunters.md.server.photos.indexing.IndexingService
 import ai.datahunters.md.server.photos.search._
-import ai.datahunters.md.server.{BaseTest, HttpEndpoint}
+import ai.datahunters.md.server.{ BaseTest, HttpEndpoint }
 import io.circe.parser._
-import monix.bio.{BIO, Task}
+import monix.bio.{ BIO, Task }
 import monix.execution.Scheduler.Implicits.global
 import org.http4s.implicits._
-import org.http4s.{Method, Request, Response, Status}
+import org.http4s.{ Method, Request, Response, Status }
 import cats.implicits._
 
 import scala.concurrent.duration._
@@ -36,8 +36,7 @@ class PhotosEndpointSpec extends BaseTest {
             "dynamic_field_1" -> PhotoEntity.MetaDataEntry.TextsEntry(List("el11", "el12")),
             "dynamic_field_2" -> PhotoEntity.MetaDataEntry.IntEntry(2137),
             "dynamic_field_3" -> PhotoEntity.MetaDataEntry.FloatEntry(21.37f),
-            "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")
-          ))
+            "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")))
 
         val facets = Map("tag_names" -> SearchResponse.FacetField(Map("tag1" -> 102, "tag2" -> 103)))
         val repositoryMock = new PhotosRepository {
@@ -71,7 +70,7 @@ class PhotosEndpointSpec extends BaseTest {
 object PhotosEndpointSpec {
   val testingPath = new File("target/testing/photos-endpoint")
 
-  val buildStorageService: Task[LocalFileSystemIndexingStorageService] = for{
+  val buildStorageService: Task[LocalFileSystemIndexingStorageService] = for {
     _ <- BIO(Files.createDirectories(testingPath.toPath))
     _ <- BIO(Files.walk(testingPath.toPath).map(_.toFile.delete()))
   } yield new LocalFileSystemIndexingStorageService(testingPath)

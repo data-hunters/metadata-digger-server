@@ -4,15 +4,20 @@ import java.util.UUID
 
 import ai.datahunters.md.server.photos.PhotosEndpoint.Json._
 import ai.datahunters.md.server.photos.PhotosEndpoint.PhotosEndpointError
-import ai.datahunters.md.server.photos.indexing.{IndexingJobId, IndexingService, StartIndexingRequest, StartIndexingResponse}
+import ai.datahunters.md.server.photos.indexing.{
+  IndexingJobId,
+  IndexingService,
+  StartIndexingRequest,
+  StartIndexingResponse
+}
 import ai.datahunters.md.server.photos.search.PhotoEntity.MetaDataEntry
 import ai.datahunters.md.server.photos.search._
 import com.typesafe.scalalogging.StrictLogging
 import io.circe.Decoder.Result
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto._
-import io.circe.{HCursor, Codec => CirceCodec, Json => CirceJson}
-import monix.bio.{Task, UIO}
+import io.circe.{ HCursor, Codec => CirceCodec, Json => CirceJson }
+import monix.bio.{ Task, UIO }
 import org.http4s.HttpRoutes
 import sttp.tapir._
 import sttp.tapir.json.circe._
@@ -45,13 +50,14 @@ class PhotosEndpoint(photosRepository: PhotosRepository, indexingService: Indexi
       .attempt
   }
 
-  def startIndexingRoute: HttpRoutes[Task] = startIndexingEndpoint.toRoutes{ request =>
+  def startIndexingRoute: HttpRoutes[Task] = startIndexingEndpoint.toRoutes { request =>
     UIO(logger.info("Starting upload")) *>
-      indexingService.handleUpload(request)
-        .mapError(e => PhotosEndpointError(e.toString))
-        .tapError(err => UIO(logger.error("Error in upload", err)))
-        .flatTap(r => UIO(logger.info(s"File uploaded, job ${r.indexingJobId} started")))
-        .attempt
+    indexingService
+      .handleUpload(request)
+      .mapError(e => PhotosEndpointError(e.toString))
+      .tapError(err => UIO(logger.error("Error in upload", err)))
+      .flatTap(r => UIO(logger.info(s"File uploaded, job ${r.indexingJobId} started")))
+      .attempt
   }
 }
 

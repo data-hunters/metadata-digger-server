@@ -3,7 +3,7 @@ package ai.datahunters.md.server.photos.indexing
 import java.io.File
 import java.util.UUID
 
-import monix.bio.{BIO, UIO}
+import monix.bio.{ BIO, UIO }
 import org.apache.tika.Tika
 import ai.datahunters.md.server.photos.indexing.IndexingService._
 import com.typesafe.scalalogging.StrictLogging
