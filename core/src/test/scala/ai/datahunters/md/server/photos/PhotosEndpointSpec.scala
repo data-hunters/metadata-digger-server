@@ -1,6 +1,11 @@
 package ai.datahunters.md.server.photos
 
+import java.io.File
+import java.nio.file.{Files, Path}
+
+import ai.datahunters.md.server.infrastructure.filesystem.LocalFileSystemIndexingStorageService
 import ai.datahunters.md.server.photos.PhotosEndpointSpec._
+import ai.datahunters.md.server.photos.indexing.IndexingService
 import ai.datahunters.md.server.photos.search._
 import ai.datahunters.md.server.{BaseTest, HttpEndpoint}
 import io.circe.parser._
@@ -8,6 +13,9 @@ import monix.bio.{BIO, Task}
 import monix.execution.Scheduler.Implicits.global
 import org.http4s.implicits._
 import org.http4s.{Method, Request, Response, Status}
+import cats.implicits._
+
+import scala.concurrent.duration._
 
 class PhotosEndpointSpec extends BaseTest {
   "Photos endpoint" when {
@@ -38,7 +46,11 @@ class PhotosEndpointSpec extends BaseTest {
           }
         }
 
-        val endpoint = new HttpEndpoint(new PhotosEndpoint(repositoryMock))
+        val storageService = buildStorageService.runSyncUnsafe(1.second)
+
+        val indexingService = new IndexingService(storageService)
+
+        val endpoint = new HttpEndpoint(new PhotosEndpoint(repositoryMock, indexingService))
 
         val requestTask = Request[Task](method = Method.POST, uri"/api/v1/photos").withEntity(request)
 
@@ -57,6 +69,13 @@ class PhotosEndpointSpec extends BaseTest {
 }
 
 object PhotosEndpointSpec {
+  val testingPath = new File("target/testing/photos-endpoint")
+
+  val buildStorageService: Task[LocalFileSystemIndexingStorageService] = for{
+    _ <- BIO(Files.createDirectories(testingPath.toPath))
+    _ <- BIO(Files.walk(testingPath.toPath).map(_.toFile.delete()))
+  } yield new LocalFileSystemIndexingStorageService(testingPath)
+
   val json: String =
     """{
       |  "photos": [
