@@ -11,7 +11,9 @@ import org.http4s.server.Router
 import org.http4s.server.blaze._
 
 class HttpEndpoint( photosEndpoint: PhotosEndpoint) {
-  val service: HttpApp[Task] = Router(apiPath -> photosEndpoint.searchRoute).orNotFound
+  private val routes = photosEndpoint.searchRoute <+> photosEndpoint.startIndexingRoute
+
+  val service: HttpApp[Task] = Router(apiPath -> routes).orNotFound
 
   def start(config: Configuration)(implicit ce: ConcurrentEffect[Task]): Task[Unit] = {
     BlazeServerBuilder[Task]
