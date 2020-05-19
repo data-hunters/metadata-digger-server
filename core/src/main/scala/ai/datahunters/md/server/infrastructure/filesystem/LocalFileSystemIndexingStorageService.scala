@@ -1,13 +1,13 @@
 package ai.datahunters.md.server.infrastructure.filesystem
 
-import java.io.{File, FileInputStream, FileOutputStream}
+import java.io.{ File, FileInputStream, FileOutputStream }
 import java.nio.channels.FileChannel
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{ Files, Path, Paths }
 
 import ai.datahunters.md.server.photos.indexing.IndexingError.IOError
-import ai.datahunters.md.server.photos.indexing.{IndexingError, IndexingJobId, IndexingStorageService}
+import ai.datahunters.md.server.photos.indexing.{ IndexingError, IndexingJobId, IndexingStorageService }
 import cats.effect.Resource
-import monix.bio.{BIO, Task}
+import monix.bio.{ BIO, Task }
 
 class LocalFileSystemIndexingStorageService(fileRoot: File) extends IndexingStorageService {
   override def saveUploadedFile(indexingJobId: IndexingJobId, file: File): BIO[IndexingError, Unit] = {
@@ -22,11 +22,13 @@ class LocalFileSystemIndexingStorageService(fileRoot: File) extends IndexingStor
   }
 
   private def copyUploadedToDestination(source: File, dest: File): Task[Unit] = {
-    Resource.fromAutoCloseable[Task, FileChannel](Task(new FileInputStream(source).getChannel)).parZip(
-      Resource.fromAutoCloseable[Task, FileChannel](Task(new FileOutputStream(dest).getChannel))
-    ).use{ case(sourceChannel, destChannel) =>
-      Task(destChannel.transferFrom(sourceChannel, 0, sourceChannel.size))
-    }
+    Resource
+      .fromAutoCloseable[Task, FileChannel](Task(new FileInputStream(source).getChannel))
+      .parZip(Resource.fromAutoCloseable[Task, FileChannel](Task(new FileOutputStream(dest).getChannel)))
+      .use {
+        case (sourceChannel, destChannel) =>
+          Task(destChannel.transferFrom(sourceChannel, 0, sourceChannel.size))
+      }
   }
 }
 

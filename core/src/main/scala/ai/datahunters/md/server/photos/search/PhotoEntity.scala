@@ -3,15 +3,15 @@ package ai.datahunters.md.server.photos.search
 import ai.datahunters.md.server.photos.search.PhotoEntity.MetaDataEntry
 
 case class PhotoEntity(
-                        id: String,
-                        basePath: String,
-                        filePath: String,
-                        fileType: String,
-                        directoryNames: List[String],
-                        tagNames: List[String],
-                        labels: List[String],
-                        thumbnail: String,
-                        metaData: Map[String, MetaDataEntry])
+    id: String,
+    basePath: String,
+    filePath: String,
+    fileType: String,
+    directoryNames: List[String],
+    tagNames: List[String],
+    labels: List[String],
+    thumbnail: String,
+    metaData: Map[String, MetaDataEntry])
 
 object PhotoEntity {
 
