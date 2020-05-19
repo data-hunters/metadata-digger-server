@@ -19,7 +19,9 @@ lazy val coreDependencies = Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
-  "com.github.takezoe" %% "solr-scala-client" % "0.0.24"
+  "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
+  "org.apache.tika" % "tika-core" % "1.24.1"
+
 )
 
 ThisBuild / organization := "ai.datahunters.md"

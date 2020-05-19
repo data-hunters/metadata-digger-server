@@ -9,9 +9,10 @@ import org.http4s.HttpApp
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.blaze._
+import org.http4s.server.middleware.CORS
 
 class HttpEndpoint( photosEndpoint: PhotosEndpoint) {
-  private val routes = photosEndpoint.searchRoute <+> photosEndpoint.startIndexingRoute
+  private val routes = CORS(photosEndpoint.searchRoute <+> photosEndpoint.startIndexingRoute)
 
   val service: HttpApp[Task] = Router(apiPath -> routes).orNotFound
 

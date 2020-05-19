@@ -21,7 +21,11 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
     val page = request.page.getOrElse(0)
     val from = perPage * page
 
-    val baseQuery = client.query(request.textQuery.getOrElse("*:*")).collection(Collection).rows(perPage).start(from)
+    val baseQuery = client
+      .query(request.textQuery.filterNot(_.isEmpty).getOrElse("*:*"))
+      .collection(Collection)
+      .rows(perPage)
+      .start(from)
 
     val query = request.facets.fold(baseQuery)(fields => baseQuery.facetFields(fields.toSeq: _*))
 
