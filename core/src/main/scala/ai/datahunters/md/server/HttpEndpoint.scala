@@ -4,7 +4,7 @@ import ai.datahunters.md.server.HttpEndpoint._
 import ai.datahunters.md.server.photos.PhotosEndpoint
 import cats.effect.ConcurrentEffect
 import cats.implicits._
-import monix.bio.{ Task, UIO }
+import monix.bio.Task
 import org.http4s.HttpApp
 import org.http4s.implicits._
 import org.http4s.server.Router

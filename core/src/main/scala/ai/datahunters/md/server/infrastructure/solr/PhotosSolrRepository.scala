@@ -8,7 +8,6 @@ import ai.datahunters.md.server.photos.search.SearchError._
 import ai.datahunters.md.server.photos.search._
 import cats.implicits._
 import com.github.takezoe.solr.scala._
-import com.typesafe.scalalogging.StrictLogging
 import monix.bio.BIO
 
 import scala.jdk.CollectionConverters._
@@ -80,8 +79,8 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
   }
   private def getOptionalCollection(valuesMap: Map[String, Any])(fieldName: String): CanFail[List[String]] = {
     valuesMap.getOrElse(fieldName, new util.ArrayList[String]()) match {
-      case strings: util.ArrayList[String] => Right(strings.asScala.toList)
-      case field                           => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
+      case StringsArrayList(strings) => Right(strings)
+      case field                     => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
     }
   }
 
@@ -98,18 +97,18 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
     for {
       field <- valuesMap.get(fieldName).toRight(SolrMissingField(fieldName))
       value <- field match {
-        case strings: util.ArrayList[String] => Right(strings.asScala.toList)
-        case _                               => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
+        case StringsArrayList(strings) => Right(strings)
+        case _                         => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
       }
     } yield value
 
   private def convertMetadaField(fieldName: String, field: Any): CanFail[PhotoEntity.MetaDataEntry] =
     field match {
-      case al: java.util.ArrayList[String] => Right(PhotoEntity.MetaDataEntry.TextsEntry(al.asScala.toList))
-      case num: Int                        => Right(PhotoEntity.MetaDataEntry.IntEntry(num))
-      case num: Float                      => Right(PhotoEntity.MetaDataEntry.FloatEntry(num))
-      case text: String                    => Right(PhotoEntity.MetaDataEntry.TextEntry(text))
-      case rest                            => Left(SolrDeserializationError(fieldName, classOf[java.util.ArrayList[String]], rest.getClass))
+      case StringsArrayList(al) => Right(PhotoEntity.MetaDataEntry.TextsEntry(al))
+      case num: Int             => Right(PhotoEntity.MetaDataEntry.IntEntry(num))
+      case num: Float           => Right(PhotoEntity.MetaDataEntry.FloatEntry(num))
+      case text: String         => Right(PhotoEntity.MetaDataEntry.TextEntry(text))
+      case rest                 => Left(SolrDeserializationError(fieldName, classOf[java.util.ArrayList[String]], rest.getClass))
     }
 
   private def mapFacets(facets: Map[String, Map[String, Long]]): Map[String, SearchResponse.FacetField] = {
@@ -125,4 +124,15 @@ object PhotosSolrRepository {
 
   case class Config(solrUrl: String)
 
+  object StringsArrayList {
+    def unapply(arg: Any): Option[List[String]] = {
+      arg match {
+        case array: util.ArrayList[_] =>
+          val scalaArray = array.asScala
+          if (scalaArray.forall(_.isInstanceOf[String])) Some(scalaArray.map(_.asInstanceOf[String]).toList)
+          else None
+        case _ => None
+      }
+    }
+  }
 }
