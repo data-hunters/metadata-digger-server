@@ -1,19 +1,19 @@
 package ai.datahunters.md.server.photos
 
 import java.io.File
-import java.nio.file.{ Files, Path }
+import java.nio.file.Files
 
 import ai.datahunters.md.server.infrastructure.filesystem.LocalFileSystemIndexingStorageService
 import ai.datahunters.md.server.photos.PhotosEndpointSpec._
 import ai.datahunters.md.server.photos.indexing.IndexingService
 import ai.datahunters.md.server.photos.search._
 import ai.datahunters.md.server.{ BaseTest, HttpEndpoint }
+import cats.implicits._
 import io.circe.parser._
 import monix.bio.{ BIO, Task }
 import monix.execution.Scheduler.Implicits.global
 import org.http4s.implicits._
 import org.http4s.{ Method, Request, Response, Status }
-import cats.implicits._
 
 import scala.concurrent.duration._
 
@@ -64,6 +64,7 @@ class PhotosEndpointSpec extends BaseTest {
     actualResp.status shouldBe expectedStatus
     val responseBody = actualResp.as[String].runSyncUnsafe()
     parse(responseBody) shouldBe parse(expectedBody)
+    ()
   }
 }
 

@@ -2,7 +2,7 @@ package ai.datahunters.md.server.infrastructure.filesystem
 
 import java.io.{ File, FileInputStream, FileOutputStream }
 import java.nio.channels.FileChannel
-import java.nio.file.{ Files, Path, Paths }
+import java.nio.file.{ Files, Paths }
 
 import ai.datahunters.md.server.photos.indexing.IndexingError.IOError
 import ai.datahunters.md.server.photos.indexing.{ IndexingError, IndexingJobId, IndexingStorageService }
@@ -28,7 +28,17 @@ class LocalFileSystemIndexingStorageService(fileRoot: File) extends IndexingStor
       .use {
         case (sourceChannel, destChannel) =>
           Task(destChannel.transferFrom(sourceChannel, 0, sourceChannel.size))
+            .flatMap(checkAmountOfTransferedBytes(sourceChannel.size()))
+
       }
+  }
+
+  private def checkAmountOfTransferedBytes(sourceChannelSize: Long)(bytesTransfered: Long) = {
+    if (bytesTransfered != sourceChannelSize)
+      BIO.raiseError(
+        new RuntimeException(
+          s"Bytes transferred $bytesTransfered does not match source channel size ${sourceChannelSize}"))
+    else Task(())
   }
 }
 
