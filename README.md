@@ -5,13 +5,14 @@
 Prequisites: 
 1. jdk 1.8+ (currently project is developed with java 8 in mind)
 1. Running Solr instance with [metadata digger dev schema](https://github.com/data-hunters/metadata-digger-deployment/tree/master/dev)
+1. Sbt with version at [least 1.0](https://www.scala-sbt.org/download.html) 
 
 ### Starting local server
 
-```./gradlew bootRun```
+```sbt run```
 
-swagger ui should be accessible from http://localhost:8080/swagger-ui.html
+swagger ui should be accessible from http://localhost:8080/docs/index.html
 
 ### Running tests
 
-```./gradlew test```
+```sbt test```
