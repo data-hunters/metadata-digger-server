@@ -12,6 +12,7 @@ import ai.datahunters.md.server.photos.indexing.{
 }
 import ai.datahunters.md.server.photos.search.PhotoEntity.MetaDataEntry
 import ai.datahunters.md.server.photos.search._
+import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import io.circe.Decoder.Result
 import io.circe.generic.extras.Configuration
@@ -22,19 +23,18 @@ import org.http4s.HttpRoutes
 import sttp.tapir._
 import sttp.tapir.json.circe._
 import sttp.tapir.server.http4s._
-import cats.implicits._
 
 class PhotosEndpoint(photosRepository: PhotosRepository, indexingService: IndexingService) extends StrictLogging {
 
   val searchEndpoint: Endpoint[SearchRequest, PhotosEndpointError, SearchResponse, Nothing] =
-    endpoint
+    endpoint.post
       .in("photos")
       .in(jsonBody[SearchRequest])
       .out(jsonBody[SearchResponse])
       .errorOut(jsonBody[PhotosEndpointError])
 
   val startIndexingEndpoint: Endpoint[StartIndexingRequest, PhotosEndpointError, StartIndexingResponse, Nothing] =
-    endpoint
+    endpoint.post
       .in("start-indexing")
       .in(multipartBody[StartIndexingRequest])
       .out(jsonBody[StartIndexingResponse])
@@ -45,7 +45,7 @@ class PhotosEndpoint(photosRepository: PhotosRepository, indexingService: Indexi
     photosRepository
       .search(request)
       .mapError(e => PhotosEndpointError(e.description))
-      .tapError(err => UIO(logger.error("Error in search", err)))
+      .tapError(err => UIO(logger.error(s"Error in search: $err")))
       .flatTap(r => UIO(logger.info(s"Returning ${r.photos.length} results, total: ${r.total}")))
       .attempt
   }
@@ -55,7 +55,7 @@ class PhotosEndpoint(photosRepository: PhotosRepository, indexingService: Indexi
     indexingService
       .handleUpload(request)
       .mapError(e => PhotosEndpointError(e.toString))
-      .tapError(err => UIO(logger.error("Error in upload", err)))
+      .tapError(err => UIO(logger.error(s"Error in upload: $err")))
       .flatTap(r => UIO(logger.info(s"File uploaded, job ${r.indexingJobId} started")))
       .attempt
   }
