@@ -16,6 +16,7 @@ import org.http4s.implicits._
 import org.http4s.{ Method, Request, Response, Status }
 
 import scala.concurrent.duration._
+import scala.io.Source
 
 class PhotosEndpointSpec extends BaseTest {
   "Photos endpoint" when {
@@ -38,7 +39,7 @@ class PhotosEndpointSpec extends BaseTest {
             "dynamic_field_3" -> PhotoEntity.MetaDataEntry.FloatEntry(21.37f),
             "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")))
 
-        val facets = Map("tag_names" -> SearchResponse.FacetField(Map("tag1" -> 102, "tag2" -> 103)))
+        val facets = Map("tag_names" -> Map("tag1" -> 102L, "tag2" -> 103L))
         val repositoryMock = new PhotosRepository {
           override def search(request: SearchRequest): BIO[SearchError, SearchResponse] = {
             BIO.now(SearchResponse(List(photo), facets, 0, 1))
@@ -76,44 +77,5 @@ object PhotosEndpointSpec {
     _ <- BIO(Files.walk(testingPath.toPath).map(_.toFile.delete()))
   } yield new LocalFileSystemIndexingStorageService(testingPath)
 
-  val json: String =
-    """{
-      |  "photos": [
-      |    {
-      |      "id": "1234",
-      |      "base_path": "base_path",
-      |      "file_path": "file_path",
-      |      "file_type": "file type",
-      |      "directory_names": [
-      |        "dir"
-      |      ],
-      |      "tag_names": [
-      |        "tag"
-      |      ],
-      |      "labels": [
-      |        "label"
-      |      ],
-      |      "thumbnail": "aW1hZ2VfaW5fYmFzZTY0",
-      |      "meta_data": {
-      |        "dynamic_field_1": [
-      |          "el11",
-      |          "el12"
-      |        ],
-      |        "dynamic_field_2": 2137,
-      |        "dynamic_field_3": 21.37,
-      |        "dynamic_field_4": "text"
-      |      }
-      |    }
-      |  ],
-      |  "facets": {
-      |    "tag_names": {
-      |      "results": {
-      |        "tag1": 102,
-      |        "tag2": 103
-      |      }
-      |    }
-      |  },
-      |  "page": 0,
-      |  "total": 1
-      |}""".stripMargin
+  val json: String = Source.fromResource("search_response.json").mkString
 }

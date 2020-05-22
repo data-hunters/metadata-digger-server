@@ -1,0 +1,37 @@
+{
+  "photos": [
+    {
+      "id": "1234",
+      "base_path": "base_path",
+      "file_path": "file_path",
+      "file_type": "file type",
+      "directory_names": [
+        "dir"
+      ],
+      "tag_names": [
+        "tag"
+      ],
+      "labels": [
+        "label"
+      ],
+      "thumbnail": "aW1hZ2VfaW5fYmFzZTY0",
+      "meta_data": {
+        "dynamic_field_1": [
+          "el11",
+          "el12"
+        ],
+        "dynamic_field_2": 2137,
+        "dynamic_field_3": 21.37,
+        "dynamic_field_4": "text"
+      }
+    }
+  ],
+  "facets": {
+    "tag_names": {
+      "tag1": 102,
+      "tag2": 103
+    }
+  },
+  "page": 0,
+  "total": 1
+}
