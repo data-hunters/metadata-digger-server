@@ -36,8 +36,11 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
   private def mapResult(page: Int)(mapQueryResult: MapQueryResult): CanFail[SearchResponse] = {
     for {
       photos <- mapQueryResult.documents.traverse(mapDocument)
-      facets = mapFacets(mapQueryResult.facetFields)
-    } yield SearchResponse(photos = photos, facets = facets, page = page, total = mapQueryResult.numFound)
+    } yield SearchResponse(
+      photos = photos,
+      facets = mapQueryResult.facetFields,
+      page = page,
+      total = mapQueryResult.numFound)
   }
 
   private def mapDocument(map: Map[String, Any]): CanFail[PhotoEntity] = {
@@ -110,11 +113,6 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
       case text: String         => Right(PhotoEntity.MetaDataEntry.TextEntry(text))
       case rest                 => Left(SolrDeserializationError(fieldName, classOf[java.util.ArrayList[String]], rest.getClass))
     }
-
-  private def mapFacets(facets: Map[String, Map[String, Long]]): Map[String, SearchResponse.FacetField] = {
-    facets.map { case (k, v) => k -> SearchResponse.FacetField(v) }
-  }
-
 }
 
 object PhotosSolrRepository {

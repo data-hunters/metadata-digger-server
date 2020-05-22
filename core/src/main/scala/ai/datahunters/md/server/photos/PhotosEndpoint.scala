@@ -89,7 +89,6 @@ object PhotosEndpoint {
     }
 
     implicit val photoEntityCode: CirceCodec[PhotoEntity] = deriveConfiguredCodec
-    implicit val facetFieldEncoder: CirceCodec[SearchResponse.FacetField] = deriveConfiguredCodec
     implicit val searchErrorCodec: CirceCodec[PhotosEndpointError] = deriveConfiguredCodec
     implicit val searchRequestCodec: CirceCodec[SearchRequest] = deriveConfiguredCodec
     implicit val searchResponseCodec: CirceCodec[SearchResponse] = deriveConfiguredCodec
