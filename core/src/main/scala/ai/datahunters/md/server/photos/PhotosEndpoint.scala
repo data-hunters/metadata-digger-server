@@ -66,10 +66,6 @@ object PhotosEndpoint {
   case class PhotosEndpointError(description: String)
 
   object Json {
-    implicit val uploadCodec
-        : (RawBodyType.MultipartBody, Codec[Seq[RawPart], StartIndexingRequest, CodecFormat.MultipartFormData]) =
-      Codec.multipartCaseClassCodec[StartIndexingRequest]
-
     implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames.withDefaults
 
     implicit val metaDataEntryCodec: CirceCodec[MetaDataEntry] = new CirceCodec[MetaDataEntry] {

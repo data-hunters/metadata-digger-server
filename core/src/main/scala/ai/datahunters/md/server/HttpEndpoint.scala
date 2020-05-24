@@ -15,6 +15,8 @@ import sttp.tapir.openapi.Server
 import sttp.tapir.openapi.circe.yaml._
 import sttp.tapir.swagger.http4s.SwaggerHttp4s
 
+import scala.concurrent.ExecutionContext
+
 class HttpEndpoint(photosEndpoint: PhotosEndpoint) {
   private val routes = CORS(photosEndpoint.searchRoute <+> photosEndpoint.startIndexingRoute)
 
@@ -28,8 +30,8 @@ class HttpEndpoint(photosEndpoint: PhotosEndpoint) {
 
   val service: HttpApp[Task] = Router(apiPath -> routes, "/" -> swaggerRoute).orNotFound
 
-  def start(config: Configuration)(implicit ce: ConcurrentEffect[Task]): Task[Unit] = {
-    BlazeServerBuilder[Task].bindHttp(config.port, config.host).withHttpApp(service).serve.compile.drain
+  def start(config: Configuration, ec: ExecutionContext)(implicit ce: ConcurrentEffect[Task]): Task[Unit] = {
+    BlazeServerBuilder.apply[Task](ec).bindHttp(config.port, config.host).withHttpApp(service).serve.compile.drain
   }
 
 }
