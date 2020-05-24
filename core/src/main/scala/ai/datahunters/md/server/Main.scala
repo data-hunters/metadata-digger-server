@@ -7,6 +7,7 @@ import ai.datahunters.md.server.photos.indexing.IndexingService
 import cats.effect.ExitCode
 import com.typesafe.scalalogging.StrictLogging
 import monix.bio.{ BIOApp, Task, UIO }
+import monix.execution.Scheduler.Implicits.global
 
 object Main extends BIOApp with StrictLogging {
   override def run(args: List[String]): UIO[ExitCode] = {
@@ -23,7 +24,7 @@ object Main extends BIOApp with StrictLogging {
       photosRepository = new PhotosSolrRepository(solrConfig)
       indexingService = new IndexingService(storageService)
       httpEndpoint = new HttpEndpoint(new PhotosEndpoint(photosRepository, indexingService))
-      _ <- httpEndpoint.start(httpConfig)
+      _ <- httpEndpoint.start(httpConfig, global)
     } yield ()
   }
 }
