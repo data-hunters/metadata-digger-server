@@ -40,25 +40,27 @@ class PhotosEndpoint(photosRepository: PhotosRepository, indexingService: Indexi
       .out(jsonBody[StartIndexingResponse])
       .errorOut(jsonBody[PhotosEndpointError])
 
-  def searchRoute: HttpRoutes[Task] = searchEndpoint.toRoutes { request =>
-    UIO(logger.info(s"Searching for $request")) *>
-    photosRepository
-      .search(request)
-      .mapError(e => PhotosEndpointError(e.description))
-      .tapError(err => UIO(logger.error(s"Error in search: $err")))
-      .flatTap(r => UIO(logger.info(s"Returning ${r.photos.length} results, total: ${r.total}")))
-      .attempt
-  }
+  def searchRoute: HttpRoutes[Task] =
+    searchEndpoint.toRoutes { request =>
+      UIO(logger.info(s"Searching for $request")) *>
+      photosRepository
+        .search(request)
+        .mapError(e => PhotosEndpointError(e.description))
+        .tapError(err => UIO(logger.error(s"Error in search: $err")))
+        .flatTap(r => UIO(logger.info(s"Returning ${r.photos.length} results, total: ${r.total}")))
+        .attempt
+    }
 
-  def startIndexingRoute: HttpRoutes[Task] = startIndexingEndpoint.toRoutes { request =>
-    UIO(logger.info("Starting upload")) *>
-    indexingService
-      .handleUpload(request)
-      .mapError(e => PhotosEndpointError(e.toString))
-      .tapError(err => UIO(logger.error(s"Error in upload: $err")))
-      .flatTap(r => UIO(logger.info(s"File uploaded, job ${r.indexingJobId} started")))
-      .attempt
-  }
+  def startIndexingRoute: HttpRoutes[Task] =
+    startIndexingEndpoint.toRoutes { request =>
+      UIO(logger.info("Starting upload")) *>
+      indexingService
+        .handleUpload(request)
+        .mapError(e => PhotosEndpointError(e.toString))
+        .tapError(err => UIO(logger.error(s"Error in upload: $err")))
+        .flatTap(r => UIO(logger.info(s"File uploaded, job ${r.indexingJobId} started")))
+        .attempt
+    }
 }
 
 object PhotosEndpoint {
@@ -69,12 +71,13 @@ object PhotosEndpoint {
     implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames.withDefaults
 
     implicit val metaDataEntryCodec: CirceCodec[MetaDataEntry] = new CirceCodec[MetaDataEntry] {
-      override def apply(a: MetaDataEntry): CirceJson = a match {
-        case MetaDataEntry.IntEntry(value)    => CirceJson.fromInt(value)
-        case MetaDataEntry.FloatEntry(value)  => CirceJson.fromFloatOrNull(value)
-        case MetaDataEntry.TextEntry(value)   => CirceJson.fromString(value)
-        case MetaDataEntry.TextsEntry(values) => CirceJson.fromValues(values.map(CirceJson.fromString))
-      }
+      override def apply(a: MetaDataEntry): CirceJson =
+        a match {
+          case MetaDataEntry.IntEntry(value)    => CirceJson.fromInt(value)
+          case MetaDataEntry.FloatEntry(value)  => CirceJson.fromFloatOrNull(value)
+          case MetaDataEntry.TextEntry(value)   => CirceJson.fromString(value)
+          case MetaDataEntry.TextsEntry(values) => CirceJson.fromValues(values.map(CirceJson.fromString))
+        }
 
       override def apply(c: HCursor): Result[MetaDataEntry] =
         c.as[Int]
