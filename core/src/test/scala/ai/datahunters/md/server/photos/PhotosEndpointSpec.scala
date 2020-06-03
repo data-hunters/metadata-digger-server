@@ -37,7 +37,8 @@ class PhotosEndpointSpec extends BaseTest {
             "dynamic_field_1" -> PhotoEntity.MetaDataEntry.TextsEntry(List("el11", "el12")),
             "dynamic_field_2" -> PhotoEntity.MetaDataEntry.IntEntry(2137),
             "dynamic_field_3" -> PhotoEntity.MetaDataEntry.FloatEntry(21.37f),
-            "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")))
+            "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")),
+          location = Some(PhotoEntity.Location(12.00, 19.17)))
 
         val facets = Map("tag_names" -> Map("tag1" -> 102L, "tag2" -> 103L))
         val repositoryMock = new PhotosRepository {
