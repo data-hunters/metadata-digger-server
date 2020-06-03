@@ -23,6 +23,10 @@
         "dynamic_field_2": 2137,
         "dynamic_field_3": 21.37,
         "dynamic_field_4": "text"
+      },
+      "location": {
+        "latitude": 12.00,
+        "longitude": 19.17
       }
     }
   ],

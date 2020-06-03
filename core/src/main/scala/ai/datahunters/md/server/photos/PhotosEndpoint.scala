@@ -84,6 +84,7 @@ object PhotosEndpoint {
           .orElse(c.as[String].map(MetaDataEntry.TextEntry))
     }
 
+    implicit val locationCodec: CirceCodec[PhotoEntity.Location] = deriveConfiguredCodec
     implicit val photoEntityCode: CirceCodec[PhotoEntity] = deriveConfiguredCodec
     implicit val searchErrorCodec: CirceCodec[PhotosEndpointError] = deriveConfiguredCodec
     implicit val searchRequestCodec: CirceCodec[SearchRequest] = deriveConfiguredCodec

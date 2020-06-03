@@ -1,6 +1,6 @@
 package ai.datahunters.md.server.photos.search
 
-import ai.datahunters.md.server.photos.search.PhotoEntity.MetaDataEntry
+import ai.datahunters.md.server.photos.search.PhotoEntity.{ Location, MetaDataEntry }
 
 case class PhotoEntity(
     id: String,
@@ -11,7 +11,8 @@ case class PhotoEntity(
     tagNames: List[String],
     labels: List[String],
     thumbnail: String,
-    metaData: Map[String, MetaDataEntry])
+    metaData: Map[String, MetaDataEntry],
+    location: Option[Location])
 
 object PhotoEntity {
 
@@ -28,5 +29,7 @@ object PhotoEntity {
     case class TextsEntry(value: List[String]) extends MetaDataEntry
 
   }
+
+  case class Location(latitude: Double, longitude: Double)
 
 }

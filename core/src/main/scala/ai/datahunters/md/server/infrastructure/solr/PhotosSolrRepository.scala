@@ -47,7 +47,7 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
     val metadata = map
       .collect {
         case (k, v) if k.startsWith("md_") =>
-          k.replaceAll("md_", "") -> convertMetadaField(k, v)
+          k.replaceFirst("md_", "") -> convertMetadaField(k, v)
       }
       .toList
       .traverse { case (k, v) => v.map(s => (k, s)) }
@@ -68,7 +68,18 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
       rawThumbnail <- getBytes("thumb_small")
       thumbnail = Base64.getEncoder.encodeToString(rawThumbnail)
       medatada <- metadata
-    } yield PhotoEntity(id, basePath, filePath, fileType, directoryNames, tagNames, labels, thumbnail, medatada)
+      location = getLocationFromMetadata(medatada)
+    } yield PhotoEntity(
+      id,
+      basePath,
+      filePath,
+      fileType,
+      directoryNames,
+      tagNames,
+      labels,
+      thumbnail,
+      medatada,
+      location)
   }
 
   private def getByteArray(valuesMap: Map[String, Any])(fieldName: String): CanFail[Array[Byte]] = {
@@ -80,11 +91,23 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
       }
     } yield value
   }
+
   private def getOptionalCollection(valuesMap: Map[String, Any])(fieldName: String): CanFail[List[String]] = {
     valuesMap.getOrElse(fieldName, new util.ArrayList[String]()) match {
       case StringsArrayList(strings) => Right(strings)
       case field                     => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
     }
+  }
+
+  private def getLocationFromMetadata(metadata: Map[String, PhotoEntity.MetaDataEntry]) = {
+    def getFloat(fieldName: String): Option[Double] = {
+      metadata.get(fieldName) match {
+        case Some(PhotoEntity.MetaDataEntry.FloatEntry(v)) => Some(v.toDouble)
+        case _                                             => None
+      }
+    }
+
+    (getFloat("gps_md_location_lat_f"), getFloat("gps_md_location_long_f")).mapN(PhotoEntity.Location)
   }
 
   private def getString(valuesMap: Map[String, Any])(fieldName: String): CanFail[String] =
