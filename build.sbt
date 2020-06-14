@@ -79,4 +79,8 @@ lazy val core = project
   )
 
 lazy val root = (project in file("."))
+  .settings(
+    mainClass in (Compile, run) := Some("ai.datahunters.md.server.Main")
+  )
+  .dependsOn(core)
   .aggregate(core)
