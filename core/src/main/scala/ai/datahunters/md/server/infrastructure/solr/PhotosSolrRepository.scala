@@ -8,11 +8,12 @@ import ai.datahunters.md.server.photos.search.SearchError._
 import ai.datahunters.md.server.photos.search._
 import cats.implicits._
 import com.github.takezoe.solr.scala._
+import com.typesafe.scalalogging.StrictLogging
 import monix.bio.BIO
 
 import scala.jdk.CollectionConverters._
 
-class PhotosSolrRepository(config: Config) extends PhotosRepository {
+class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictLogging {
   val client = new SolrClient(config.solrUrl)
 
   override def search(request: SearchRequest): BIO[SearchError, SearchResponse] = {
@@ -59,13 +60,14 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
 
     for {
       id <- getStr("id")
+      _ = logger.debug(s"Parsing $id")
       basePath <- getStr("base_path")
       filePath <- getStr("file_path")
       fileType <- getStr("file_type")
       directoryNames <- getList("directory_names")
       tagNames <- getList("tag_names")
       labels <- getOptList("labels")
-      rawThumbnail <- getBytes("thumb_small")
+      rawThumbnail <- getBytes("small_thumb")
       thumbnail = Base64.getEncoder.encodeToString(rawThumbnail)
       medatada <- metadata
       location = getLocationFromMetadata(medatada)
@@ -92,11 +94,14 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
     } yield value
   }
 
-  private def getOptionalCollection(valuesMap: Map[String, Any])(fieldName: String): CanFail[List[String]] = {
-    valuesMap.getOrElse(fieldName, new util.ArrayList[String]()) match {
+  private def extractCollection(fieldName: String, possibleCollection: Any): CanFail[List[String]] =
+    possibleCollection match {
+      case str: String               => Right(List(str))
       case StringsArrayList(strings) => Right(strings)
       case field                     => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
     }
+  private def getOptionalCollection(valuesMap: Map[String, Any])(fieldName: String): CanFail[List[String]] = {
+    extractCollection(fieldName, valuesMap.getOrElse(fieldName, new util.ArrayList[String]()))
   }
 
   private def getLocationFromMetadata(metadata: Map[String, PhotoEntity.MetaDataEntry]) = {
@@ -122,10 +127,7 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository {
   private def getCollection(valuesMap: Map[String, Any])(fieldName: String): CanFail[List[String]] =
     for {
       field <- valuesMap.get(fieldName).toRight(SolrMissingField(fieldName))
-      value <- field match {
-        case StringsArrayList(strings) => Right(strings)
-        case _                         => Left(SolrDeserializationError(fieldName, classOf[util.ArrayList[String]], field.getClass))
-      }
+      value <- extractCollection(fieldName, field)
     } yield value
 
   private def convertMetadaField(fieldName: String, field: Any): CanFail[PhotoEntity.MetaDataEntry] =
