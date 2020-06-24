@@ -1,4 +1,4 @@
-lazy val tapirVersion = "0.16.0"
+lazy val tapirVersion = "0.16.1"
 lazy val circeVersion = "0.13.0"
 
 lazy val coreDependencies = Seq(
@@ -8,8 +8,8 @@ lazy val coreDependencies = Seq(
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
-  "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-  "org.scalatestplus" %% "scalacheck-1-14" % "3.1.2.0" % Test,
+  "org.scalatest" %% "scalatest" % "3.1.2" % Test,
+  "org.scalatestplus" %% "scalacheck-1-14" % "3.2.0.0" % Test,
   "com.github.chocpanda" %% "scalacheck-magnolia" % "0.4.0" % Test,
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
