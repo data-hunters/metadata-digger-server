@@ -1,4 +1,4 @@
-lazy val tapirVersion = "0.16.2"
+lazy val tapirVersion = "0.16.3"
 lazy val circeVersion = "0.13.0"
 
 lazy val coreDependencies = Seq(
