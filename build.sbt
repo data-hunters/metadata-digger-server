@@ -2,7 +2,7 @@ lazy val tapirVersion = "0.16.2"
 lazy val circeVersion = "0.13.0"
 
 lazy val coreDependencies = Seq(
-  "io.monix" %% "monix-bio" % "0.1.1",
+  "io.monix" %% "monix-bio" % "1.0.0",
   "com.softwaremill.sttp.tapir" %% "tapir-core" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % tapirVersion,
