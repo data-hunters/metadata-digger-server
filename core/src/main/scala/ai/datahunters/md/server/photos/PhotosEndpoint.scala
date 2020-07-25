@@ -4,12 +4,7 @@ import java.util.UUID
 
 import ai.datahunters.md.server.photos.PhotosEndpoint.Json._
 import ai.datahunters.md.server.photos.PhotosEndpoint.PhotosEndpointError
-import ai.datahunters.md.server.photos.indexing.{
-  IndexingJobId,
-  IndexingService,
-  StartIndexingRequest,
-  StartIndexingResponse
-}
+import ai.datahunters.md.server.photos.indexing.{IndexingJobId, IndexingService, StartIndexingRequest, StartIndexingResponse}
 import ai.datahunters.md.server.photos.search.PhotoEntity.MetaDataEntry
 import ai.datahunters.md.server.photos.search._
 import cats.implicits._
@@ -17,8 +12,9 @@ import com.typesafe.scalalogging.StrictLogging
 import io.circe.Decoder.Result
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.semiauto._
-import io.circe.{ HCursor, Codec => CirceCodec, Json => CirceJson }
-import monix.bio.{ Task, UIO }
+import io.circe.syntax._
+import io.circe.{Decoder, HCursor, KeyDecoder, KeyEncoder, Codec => CirceCodec, Json => CirceJson}
+import monix.bio.{Task, UIO}
 import org.http4s.HttpRoutes
 import sttp.tapir._
 import sttp.tapir.json.circe._
@@ -87,9 +83,22 @@ object PhotosEndpoint {
           .orElse(c.as[String].map(MetaDataEntry.TextEntry))
     }
 
+    implicit val fieldKeyEncoder: KeyEncoder[Field] = (key: Field) => key.entryName
+    implicit val fieldKeyDecoder: KeyDecoder[Field] = (key: String) => Field.withNameInsensitiveOption(key)
     implicit val locationCodec: CirceCodec[PhotoEntity.Location] = deriveConfiguredCodec
     implicit val photoEntityCode: CirceCodec[PhotoEntity] = deriveConfiguredCodec
     implicit val searchErrorCodec: CirceCodec[PhotosEndpointError] = deriveConfiguredCodec
+    implicit val multipleSelectFilterCodec: CirceCodec[Filter.MultipleSelectFilter] = deriveConfiguredCodec
+
+    implicit val filterCodec: CirceCodec[Filter] = new CirceCodec[Filter] {
+      override def apply(a: Filter): CirceJson = a match {
+        case f: Filter.MultipleSelectFilter => f.asJson
+      }
+
+      override def apply(c: HCursor): Result[Filter] = List[Decoder[Filter]](
+        Decoder[Filter.MultipleSelectFilter].widen
+      ).reduceLeft(_ or _).decodeJson(c.value)
+    }
     implicit val searchRequestCodec: CirceCodec[SearchRequest] = deriveConfiguredCodec
     implicit val searchResponseCodec: CirceCodec[SearchResponse] = deriveConfiguredCodec
     implicit val indexingJobIdCodec: CirceCodec[IndexingJobId] = new CirceCodec[IndexingJobId] {

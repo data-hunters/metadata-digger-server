@@ -1,5 +1,6 @@
 lazy val tapirVersion = "0.16.5"
 lazy val circeVersion = "0.13.0"
+lazy val enumeratumVersion = "1.6.1"
 
 lazy val coreDependencies = Seq(
   "io.monix" %% "monix-bio" % "0.1.1",
@@ -24,7 +25,9 @@ lazy val coreDependencies = Seq(
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-http4s" % tapirVersion,
-  "com.softwaremill.sttp.tapir" %% "tapir-redoc-http4s" % tapirVersion
+  "com.softwaremill.sttp.tapir" %% "tapir-redoc-http4s" % tapirVersion,
+  "com.beachape" %% "enumeratum" % enumeratumVersion,
+  "com.beachape" %% "enumeratum-circe" % enumeratumVersion
 )
 
 lazy val strictScalacOptions =  Seq(

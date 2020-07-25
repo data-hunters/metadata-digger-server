@@ -20,4 +20,7 @@ object SearchError {
     override def description: String = err.getMessage
   }
 
+  case class UnexpectedFacetField(field: String) extends SearchError {
+    override def description: String = s"Unexpected field when parsing facets: $field"
+  }
 }

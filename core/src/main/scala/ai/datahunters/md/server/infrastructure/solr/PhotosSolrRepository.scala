@@ -23,27 +23,38 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
 
     val baseQuery = client
       .query(request.textQuery.filterNot(_.isEmpty).getOrElse("*:*"))
+      .filteredQuery(request.filters.map(_.map(filterToFilterQuery)).getOrElse(Set.empty).toSeq :_*)
       .collection(Collection)
       .rows(perPage)
       .start(from)
 
-    val query = request.facets.fold(baseQuery)(fields => baseQuery.facetFields(fields.toSeq: _*))
+    val query = request.facets.fold(baseQuery)(fields => baseQuery.facetFields(fields.map(_.solrFieldName).toSeq: _*))
 
     BIO(query.getResultAsMap())
       .mapError(err => SolrExecutionError(err))
       .flatMap(qr => BIO.fromEither(mapResult(page)(qr)))
   }
 
+  private def filterToFilterQuery(filter: Filter): String =
+    filter match {
+      case Filter.MultipleSelectFilter(fieldName, selectedValues) =>
+        s"${fieldName.solrFieldName}:${selectedValues.mkString("(", " ", ")")}"
+    }
   private def mapResult(page: Int)(mapQueryResult: MapQueryResult): CanFail[SearchResponse] = {
     for {
       photos <- mapQueryResult.documents.traverse(mapDocument)
+      facets <- mapQueryResult.facetFields.toList
+        .traverse{case (k, v) => solrFacetFieldToDomain(k).map(f => f -> v)}
     } yield SearchResponse(
       photos = photos,
-      facets = mapQueryResult.facetFields,
+      facets = facets.toMap,
       page = page,
       total = mapQueryResult.numFound)
   }
 
+  private def solrFacetFieldToDomain(field: String) = {
+    Field.values.find(_.solrFieldName == field).toRight(UnexpectedFacetField(field))
+  }
   private def mapDocument(map: Map[String, Any]): CanFail[PhotoEntity] = {
     val metadata = map
       .collect {
