@@ -40,7 +40,7 @@ class PhotosEndpointSpec extends BaseTest {
             "dynamic_field_4" -> PhotoEntity.MetaDataEntry.TextEntry("text")),
           location = Some(PhotoEntity.Location(12.00, 19.17)))
 
-        val facets = Map("tag_names" -> Map("tag1" -> 102L, "tag2" -> 103L))
+        val facets: Map[Field, Map[String, Long]] = Map(Field.Labels -> Map("tag1" -> 102L, "tag2" -> 103L))
         val repositoryMock = new PhotosRepository {
           override def search(request: SearchRequest): BIO[SearchError, SearchResponse] = {
             BIO.now(SearchResponse(List(photo), facets, 0, 1))

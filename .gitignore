@@ -45,3 +45,4 @@ project/plugins/project/
 .cache
 .lib/
 **/.bloop
+.metals
