@@ -1,12 +1,13 @@
 package ai.datahunters.md.server.photos.search
 
-import enumeratum.{CirceEnum, Enum, EnumEntry}
+import enumeratum.EnumEntry.Snakecase
+import enumeratum.Enum
 
-sealed trait Field extends EnumEntry {
+sealed trait Field extends Snakecase {
   def solrFieldName: String
 }
 
-object Field extends Enum[Field] with CirceEnum[Field] {
+object Field extends Enum[Field] {
 
   case object Labels extends Field {
     override def solrFieldName: String = "labels"
@@ -30,4 +31,3 @@ object Field extends Enum[Field] with CirceEnum[Field] {
 
   override def values: IndexedSeq[Field] = findValues
 }
-

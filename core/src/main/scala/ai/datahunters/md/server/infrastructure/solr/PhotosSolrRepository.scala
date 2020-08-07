@@ -23,7 +23,7 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
 
     val baseQuery = client
       .query(request.textQuery.filterNot(_.isEmpty).getOrElse("*:*"))
-      .filteredQuery(request.filters.map(_.map(filterToFilterQuery)).getOrElse(Set.empty).toSeq :_*)
+      .filteredQuery(request.filters.map(_.map(filterToFilterQuery)).getOrElse(Set.empty).toSeq: _*)
       .collection(Collection)
       .rows(perPage)
       .start(from)
@@ -43,13 +43,8 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
   private def mapResult(page: Int)(mapQueryResult: MapQueryResult): CanFail[SearchResponse] = {
     for {
       photos <- mapQueryResult.documents.traverse(mapDocument)
-      facets <- mapQueryResult.facetFields.toList
-        .traverse{case (k, v) => solrFacetFieldToDomain(k).map(f => f -> v)}
-    } yield SearchResponse(
-      photos = photos,
-      facets = facets.toMap,
-      page = page,
-      total = mapQueryResult.numFound)
+      facets <- mapQueryResult.facetFields.toList.traverse { case (k, v) => solrFacetFieldToDomain(k).map(f => f -> v) }
+    } yield SearchResponse(photos = photos, facets = facets.toMap, page = page, total = mapQueryResult.numFound)
   }
 
   private def solrFacetFieldToDomain(field: String) = {
