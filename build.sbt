@@ -1,4 +1,4 @@
-lazy val tapirVersion = "0.16.5"
+lazy val tapirVersion = "0.16.13"
 lazy val circeVersion = "0.13.0"
 lazy val enumeratumVersion = "1.6.1"
 
