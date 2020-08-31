@@ -7,13 +7,13 @@ import java.nio.file.{ Files, Paths }
 import ai.datahunters.md.server.photos.indexing.IndexingError.IOError
 import ai.datahunters.md.server.photos.indexing.{ IndexingError, IndexingJobId, IndexingStorageService }
 import cats.effect.Resource
-import monix.bio.{ BIO, Task }
+import monix.bio.{ IO, Task }
 
 class LocalFileSystemIndexingStorageService(fileRoot: File) extends IndexingStorageService {
-  override def saveUploadedFile(indexingJobId: IndexingJobId, file: File): BIO[IndexingError, Unit] = {
+  override def saveUploadedFile(indexingJobId: IndexingJobId, file: File): IO[IndexingError, Unit] = {
     val operation = for {
-      path <- BIO(Paths.get(fileRoot.getAbsolutePath, indexingJobId.buildPath, "upload"))
-      _ <- BIO(Files.createDirectories(path))
+      path <- IO(Paths.get(fileRoot.getAbsolutePath, indexingJobId.buildPath, "upload"))
+      _ <- IO(Files.createDirectories(path))
       fileToBeSaved = path.resolve("upload").toFile
       _ <- copyUploadedToDestination(file, fileToBeSaved)
     } yield ()
@@ -35,7 +35,7 @@ class LocalFileSystemIndexingStorageService(fileRoot: File) extends IndexingStor
 
   private def checkAmountOfTransferedBytes(sourceChannelSize: Long)(bytesTransfered: Long) = {
     if (bytesTransfered != sourceChannelSize)
-      BIO.raiseError(
+      IO.raiseError(
         new RuntimeException(
           s"Bytes transferred $bytesTransfered does not match source channel size ${sourceChannelSize}"))
     else Task(())
@@ -49,7 +49,7 @@ object LocalFileSystemIndexingStorageService {
     val fileRoot = new File(config.rootDirPath)
 
     for {
-      _ <- BIO(Files.createDirectories(fileRoot.toPath))
+      _ <- IO(Files.createDirectories(fileRoot.toPath))
     } yield new LocalFileSystemIndexingStorageService(fileRoot)
   }
 

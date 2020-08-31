@@ -9,14 +9,14 @@ import ai.datahunters.md.server.photos.search._
 import cats.implicits._
 import com.github.takezoe.solr.scala._
 import com.typesafe.scalalogging.StrictLogging
-import monix.bio.BIO
+import monix.bio.IO
 
 import scala.jdk.CollectionConverters._
 
 class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictLogging {
   val client = new SolrClient(config.solrUrl)
 
-  override def search(request: SearchRequest): BIO[SearchError, SearchResponse] = {
+  override def search(request: SearchRequest): IO[SearchError, SearchResponse] = {
     val perPage = request.perPage.getOrElse(DefaultPerPage)
     val page = request.page.getOrElse(0)
     val from = perPage * page
@@ -30,9 +30,9 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
 
     val query = request.facets.fold(baseQuery)(fields => baseQuery.facetFields(fields.map(_.solrFieldName).toSeq: _*))
 
-    BIO(query.getResultAsMap())
+    IO(query.getResultAsMap())
       .mapError(err => SolrExecutionError(err))
-      .flatMap(qr => BIO.fromEither(mapResult(page)(qr)))
+      .flatMap(qr => IO.fromEither(mapResult(page)(qr)))
   }
 
   private def filterToFilterQuery(filter: Filter): String =

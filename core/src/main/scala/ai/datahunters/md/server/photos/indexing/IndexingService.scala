@@ -3,19 +3,19 @@ package ai.datahunters.md.server.photos.indexing
 import java.io.File
 import java.util.UUID
 
-import monix.bio.{ BIO, UIO }
+import monix.bio.{ IO, UIO }
 import org.apache.tika.Tika
 import ai.datahunters.md.server.photos.indexing.IndexingService._
 import com.typesafe.scalalogging.StrictLogging
 
 class IndexingService(indexingStorageService: IndexingStorageService) extends StrictLogging {
   private val tika = new Tika()
-  def handleUpload(startIndexingRequest: StartIndexingRequest): BIO[IndexingError, StartIndexingResponse] = {
+  def handleUpload(startIndexingRequest: StartIndexingRequest): IO[IndexingError, StartIndexingResponse] = {
     val indexingId = IndexingJobId(UUID.randomUUID())
 
     for {
       _ <- UIO(logger.info(s"Starting upload for $indexingId"))
-      file <- BIO.fromEither(detectFileType(startIndexingRequest.file))
+      file <- IO.fromEither(detectFileType(startIndexingRequest.file))
       _ <- indexingStorageService.saveUploadedFile(indexingId, file)
       _ <- (extractFile(indexingId).flatMap(_ => startSpark(indexingId))).start
     } yield StartIndexingResponse(indexingId)
@@ -27,10 +27,10 @@ class IndexingService(indexingStorageService: IndexingStorageService) extends St
     else Left(IndexingError.WrongUploadedFileType(fileType))
   }
 
-  private def extractFile(indexingJobId: IndexingJobId): BIO[IndexingError, Unit] =
+  private def extractFile(indexingJobId: IndexingJobId): IO[IndexingError, Unit] =
     UIO(logger.info(s"Fake extract for $indexingJobId"))
 
-  private def startSpark(indexingJobId: IndexingJobId): BIO[IndexingError, Unit] =
+  private def startSpark(indexingJobId: IndexingJobId): IO[IndexingError, Unit] =
     UIO(logger.info(s"Fake start spark for $indexingJobId"))
 }
 object IndexingService {
