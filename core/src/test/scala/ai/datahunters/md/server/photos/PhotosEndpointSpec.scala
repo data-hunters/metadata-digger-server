@@ -10,7 +10,7 @@ import ai.datahunters.md.server.photos.search._
 import ai.datahunters.md.server.{ BaseTest, HttpEndpoint }
 import cats.implicits._
 import io.circe.parser._
-import monix.bio.{ BIO, Task }
+import monix.bio.{ IO, Task }
 import monix.execution.Scheduler.Implicits.global
 import org.http4s.implicits._
 import org.http4s.{ Method, Request, Response, Status }
@@ -42,8 +42,8 @@ class PhotosEndpointSpec extends BaseTest {
 
         val facets: Map[Field, Map[String, Long]] = Map(Field.Labels -> Map("tag1" -> 102L, "tag2" -> 103L))
         val repositoryMock = new PhotosRepository {
-          override def search(request: SearchRequest): BIO[SearchError, SearchResponse] = {
-            BIO.now(SearchResponse(List(photo), facets, 0, 1))
+          override def search(request: SearchRequest): IO[SearchError, SearchResponse] = {
+            IO.now(SearchResponse(List(photo), facets, 0, 1))
           }
         }
 
@@ -74,8 +74,8 @@ object PhotosEndpointSpec {
   val testingPath = new File("target/testing/photos-endpoint")
 
   val buildStorageService: Task[LocalFileSystemIndexingStorageService] = for {
-    _ <- BIO(Files.createDirectories(testingPath.toPath))
-    _ <- BIO(Files.walk(testingPath.toPath).map(_.toFile.delete()))
+    _ <- IO(Files.createDirectories(testingPath.toPath))
+    _ <- IO(Files.walk(testingPath.toPath).map(_.toFile.delete()))
   } yield new LocalFileSystemIndexingStorageService(testingPath)
 
   val json: String = Source.fromResource("search_response.json").mkString
