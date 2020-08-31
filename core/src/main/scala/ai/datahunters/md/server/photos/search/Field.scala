@@ -13,7 +13,7 @@ object Field extends Enum[Field] {
     override def solrFieldName: String = "labels"
   }
 
-  case object Type extends Field {
+  case object FileType extends Field {
     override def solrFieldName: String = "file_type"
   }
 
@@ -25,7 +25,7 @@ object Field extends Enum[Field] {
     override def solrFieldName: String = "directory_names"
   }
 
-  case object Model extends Field {
+  case object CameraModel extends Field {
     override def solrFieldName: String = "md_exif_ifd0_model"
   }
 
