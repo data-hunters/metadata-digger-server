@@ -25,10 +25,9 @@ class LocalFileSystemIndexingStorageService(fileRoot: File) extends IndexingStor
     Resource
       .fromAutoCloseable[Task, FileChannel](Task(new FileInputStream(source).getChannel))
       .parZip(Resource.fromAutoCloseable[Task, FileChannel](Task(new FileOutputStream(dest).getChannel)))
-      .use {
-        case (sourceChannel, destChannel) =>
-          Task(destChannel.transferFrom(sourceChannel, 0, sourceChannel.size))
-            .flatMap(checkAmountOfTransferedBytes(sourceChannel.size()))
+      .use { case (sourceChannel, destChannel) =>
+        Task(destChannel.transferFrom(sourceChannel, 0, sourceChannel.size))
+          .flatMap(checkAmountOfTransferedBytes(sourceChannel.size()))
 
       }
   }
