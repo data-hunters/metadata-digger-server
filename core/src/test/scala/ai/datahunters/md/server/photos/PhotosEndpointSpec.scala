@@ -43,7 +43,7 @@ class PhotosEndpointSpec extends BaseTest {
         val facets: Map[Field, Map[String, Long]] = Map(Field.Labels -> Map("tag1" -> 102L, "tag2" -> 103L))
         val repositoryMock = new PhotosRepository {
           override def search(request: SearchRequest): IO[SearchError, SearchResponse] = {
-            IO.now(SearchResponse(List(photo), facets, 0, 1))
+            IO.now(SearchResponse(List(photo), facets, 0, 1, Set(PossibleFilter.MultipleSelectFilter(Field.Labels, Map("label" -> 42L)))))
           }
         }
 
