@@ -28,7 +28,7 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
 
     IO(query.getResultAsMap())
       .mapError(err => SolrExecutionError(err))
-      .flatMap(qr => IO.fromEither(mapResult(page)(qr)))
+      .flatMap(qr => IO.fromEither(mapResult(request.filters.getOrElse(Set.empty), page)(qr)))
   }
 
   private def filterToFilterQuery(filter: FilterToBeApplied): String =
@@ -37,11 +37,12 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
         s"${fieldName.solrFieldName}:${selectedValues.mkString("(", " ", ")")}"
     }
 
-  private def mapResult(page: Int)(mapQueryResult: MapQueryResult): CanFail[SearchResponse] = {
+  private def mapResult(selectedFilters: Set[FilterToBeApplied], page: Int)(
+      mapQueryResult: MapQueryResult): CanFail[SearchResponse] = {
     for {
       photos <- mapQueryResult.documents.traverse(mapDocument)
       facets <- mapQueryResult.facetFields.toList.traverse { case (k, v) => solrFacetFieldToDomain(k).map(f => f -> v) }
-      possibleFilters = buildPossibleFilters(facets.toMap)
+      possibleFilters = buildPossibleFilters(selectedFilters, facets.toMap)
     } yield SearchResponse(
       photos = photos,
       facets = facets.toMap,
@@ -50,9 +51,20 @@ class PhotosSolrRepository(config: Config) extends PhotosRepository with StrictL
       possibleFilters = possibleFilters)
   }
 
-  private def buildPossibleFilters(facets: Map[Field, Map[String, Long]]): Set[PossibleFilter] = {
-    facets.map{ case(field, values) =>
-       PossibleFilter.MultipleSelectFilter(field, values)
+  private def buildPossibleFilters(
+      selectedFilters: Set[FilterToBeApplied],
+      facets: Map[Field, Map[String, Long]]): Set[PossibleFilter] = {
+    def isValueSelected(field: Field, value: String): Boolean = {
+      selectedFilters
+        .collectFirst { case FilterToBeApplied.MultipleSelectFilter(`field`, selectedValues) => selectedValues(value) }
+        .getOrElse(false)
+    }
+    facets.map { case (field, values) =>
+      val possibleValues = values.map { case (name, count) =>
+        PossibleFilter.MultipleSelectFilter.PossibleValue(name, count, isValueSelected(field, name))
+      }.toList
+
+      PossibleFilter.MultipleSelectFilter(field, possibleValues)
     }.toSet
   }
 }

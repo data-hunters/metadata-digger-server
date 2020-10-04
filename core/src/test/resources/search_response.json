@@ -38,12 +38,21 @@
   },
   "page": 0,
   "total": 1,
-  "possible_filters" : [
+  "possible_filters": [
     {
-      "field" : "labels",
-      "possible_values" : {
-        "label" : 42
-      }
+      "field": "labels",
+      "values": [
+        {
+          "name": "label",
+          "entry_count": 42,
+          "is_selected": true
+        },
+        {
+          "name": "label2",
+          "entry_count": 20,
+          "is_selected": false
+        }
+      ]
     }
   ]
 }

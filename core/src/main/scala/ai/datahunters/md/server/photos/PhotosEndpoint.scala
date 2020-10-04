@@ -95,7 +95,8 @@ object PhotosEndpoint {
     implicit val locationCodec: CirceCodec[PhotoEntity.Location] = deriveConfiguredCodec
     implicit val photoEntityCode: CirceCodec[PhotoEntity] = deriveConfiguredCodec
     implicit val searchErrorCodec: CirceCodec[PhotosEndpointError] = deriveConfiguredCodec
-    implicit val toBeAppliedmultipleSelectFilterCodec: CirceCodec[FilterToBeApplied.MultipleSelectFilter] = deriveConfiguredCodec
+    implicit val toBeAppliedmultipleSelectFilterCodec: CirceCodec[FilterToBeApplied.MultipleSelectFilter] =
+      deriveConfiguredCodec
 
     implicit val filterCodec: CirceCodec[FilterToBeApplied] = new CirceCodec[FilterToBeApplied] {
       override def apply(a: FilterToBeApplied): CirceJson =
@@ -104,14 +105,21 @@ object PhotosEndpoint {
         }
 
       override def apply(c: HCursor): Result[FilterToBeApplied] =
-        List[Decoder[FilterToBeApplied]](Decoder[FilterToBeApplied.MultipleSelectFilter].widen).reduceLeft(_ or _).decodeJson(c.value)
+        List[Decoder[FilterToBeApplied]](Decoder[FilterToBeApplied.MultipleSelectFilter].widen)
+          .reduceLeft(_ or _)
+          .decodeJson(c.value)
     }
     implicit val searchRequestCodec: CirceCodec[SearchRequest] = deriveConfiguredCodec
-    implicit val possibleMultipleSelectFilterCodec: CirceCodec[PossibleFilter.MultipleSelectFilter] = deriveConfiguredCodec
+    implicit val possibleMultpipleSelectFilterValueCode: CirceCodec[PossibleFilter.MultipleSelectFilter.PossibleValue] =
+      deriveConfiguredCodec
+    implicit val possibleMultipleSelectFilterCodec: CirceCodec[PossibleFilter.MultipleSelectFilter] =
+      deriveConfiguredCodec
 
     implicit val possibleFilterCodec: CirceCodec[PossibleFilter] = new CirceCodec[PossibleFilter] {
       override def apply(c: HCursor): Result[PossibleFilter] =
-        List[Decoder[PossibleFilter]](Decoder[PossibleFilter.MultipleSelectFilter].widen).reduceLeft(_ or _).decodeJson(c.value)
+        List[Decoder[PossibleFilter]](Decoder[PossibleFilter.MultipleSelectFilter].widen)
+          .reduceLeft(_ or _)
+          .decodeJson(c.value)
 
       override def apply(a: PossibleFilter): CirceJson = a match {
         case c: PossibleFilter.MultipleSelectFilter => c.asJson

@@ -4,8 +4,12 @@ import java.util
 import java.util.Base64
 
 import cats.implicits._
-import ai.datahunters.md.server.photos.search.{Field, PhotoEntity, SearchError}
-import ai.datahunters.md.server.photos.search.SearchError.{SolrDeserializationError, SolrMissingField, UnexpectedFacetField}
+import ai.datahunters.md.server.photos.search.{ Field, PhotoEntity, SearchError }
+import ai.datahunters.md.server.photos.search.SearchError.{
+  SolrDeserializationError,
+  SolrMissingField,
+  UnexpectedFacetField
+}
 import scala.jdk.CollectionConverters._
 
 object ResponseParser {
@@ -107,7 +111,6 @@ object ResponseParser {
       case text: String         => Right(PhotoEntity.MetaDataEntry.TextEntry(text))
       case rest                 => Left(SolrDeserializationError(fieldName, classOf[java.util.ArrayList[String]], rest.getClass))
     }
-
 
   object StringsArrayList {
     def unapply(arg: Any): Option[List[String]] = {
