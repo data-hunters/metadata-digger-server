@@ -28,10 +28,17 @@ import sttp.tapir.server.http4s._
 
 class PhotosEndpoint(photosRepository: PhotosRepository, indexingService: IndexingService) extends StrictLogging {
 
+  val serarchRequestExample = SearchRequest(
+    textQuery = Some("building"),
+    facets = Some(Set(Field.TagNames, Field.DirectoryNames, Field.Labels, Field.FileType, Field.CameraModel)),
+    page = Some(0),
+    perPage = Some(10),
+    filters = Some(Set(FilterToBeApplied.MultipleSelectFilter(Field.FileType, Set("JPEG"))))
+  )
   val searchEndpoint: Endpoint[SearchRequest, PhotosEndpointError, SearchResponse, Nothing] =
     endpoint.post
       .in("photos")
-      .in(jsonBody[SearchRequest])
+      .in(jsonBody[SearchRequest].example(serarchRequestExample))
       .out(jsonBody[SearchResponse])
       .errorOut(jsonBody[PhotosEndpointError])
 
