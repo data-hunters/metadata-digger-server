@@ -49,7 +49,6 @@ lazy val strictScalacOptions =  Seq(
   "-Xlint:inaccessible",               // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any",                  // Warn when a type argument is inferred to be `Any`.
   "-Xlint:missing-interpolator",       // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Xlint:nullary-unit",               // Warn when nullary methods return Unit.
   "-Xlint:option-implicit",            // Option.apply used implicit view.
   "-Xlint:package-object-classes",     // Class or object defined in package object.
@@ -73,7 +72,7 @@ lazy val strictScalacOptions =  Seq(
 ThisBuild / organization := "ai.datahunters.md"
 ThisBuild / name := "metadata-digger-server"
 ThisBuild / version := "0.0.1-SNAPSHOT"
-ThisBuild / scalaVersion := "2.13.2"
+ThisBuild / scalaVersion := "2.13.4"
 
 lazy val core = project
   .settings(
