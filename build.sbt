@@ -11,7 +11,7 @@ lazy val coreDependencies = Seq(
   "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
   "org.scalatest" %% "scalatest" % "3.2.3" % Test,
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % Test,
-  "com.github.chocpanda" %% "scalacheck-magnolia" % "0.5.1" % Test,
+  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.3" % Test,
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
@@ -49,7 +49,6 @@ lazy val strictScalacOptions =  Seq(
   "-Xlint:inaccessible",               // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any",                  // Warn when a type argument is inferred to be `Any`.
   "-Xlint:missing-interpolator",       // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Xlint:nullary-unit",               // Warn when nullary methods return Unit.
   "-Xlint:option-implicit",            // Option.apply used implicit view.
   "-Xlint:package-object-classes",     // Class or object defined in package object.
@@ -71,9 +70,8 @@ lazy val strictScalacOptions =  Seq(
 
 
 ThisBuild / organization := "ai.datahunters.md"
-ThisBuild / name := "metadata-digger-server"
 ThisBuild / version := "0.0.1-SNAPSHOT"
-ThisBuild / scalaVersion := "2.13.2"
+ThisBuild / scalaVersion := "2.13.4"
 
 lazy val core = project
   .settings(

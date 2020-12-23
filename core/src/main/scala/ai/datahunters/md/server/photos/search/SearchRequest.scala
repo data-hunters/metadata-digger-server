@@ -5,4 +5,4 @@ case class SearchRequest(
     facets: Option[Set[Field]],
     page: Option[Int],
     perPage: Option[Int],
-    filters: Option[Set[Filter]])
+    filters: Option[Set[FilterToBeApplied]])
