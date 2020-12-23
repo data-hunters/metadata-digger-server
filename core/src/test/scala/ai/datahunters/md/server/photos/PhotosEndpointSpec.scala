@@ -1,21 +1,17 @@
 package ai.datahunters.md.server.photos
 
-import java.io.File
-import java.nio.file.Files
-
 import ai.datahunters.md.server.infrastructure.filesystem.LocalFileSystemIndexingStorageService
 import ai.datahunters.md.server.photos.PhotosEndpointSpec._
-import ai.datahunters.md.server.photos.indexing.IndexingService
 import ai.datahunters.md.server.photos.search._
 import ai.datahunters.md.server.{ BaseTest, HttpEndpoint }
-import cats.implicits._
 import io.circe.parser._
 import monix.bio.{ IO, Task }
 import monix.execution.Scheduler.Implicits.global
 import org.http4s.implicits._
 import org.http4s.{ Method, Request, Response, Status }
 
-import scala.concurrent.duration._
+import java.io.File
+import java.nio.file.Files
 import scala.io.Source
 
 class PhotosEndpointSpec extends BaseTest {
@@ -59,11 +55,7 @@ class PhotosEndpointSpec extends BaseTest {
           }
         }
 
-        val storageService = buildStorageService.runSyncUnsafe(1.second)
-
-        val indexingService = new IndexingService(storageService)
-
-        val endpoint = new HttpEndpoint(new PhotosEndpoint(repositoryMock, indexingService))
+        val endpoint = new HttpEndpoint(new PhotosEndpoint(repositoryMock))
 
         val requestTask = Request[Task](method = Method.POST, uri"/api/v1/photos").withEntity(request)
 

@@ -3,7 +3,6 @@ package ai.datahunters.md.server
 import ai.datahunters.md.server.HttpEndpoint._
 import ai.datahunters.md.server.photos.PhotosEndpoint
 import cats.effect.ConcurrentEffect
-import cats.implicits._
 import monix.bio.Task
 import org.http4s.implicits._
 import org.http4s.server.Router
@@ -18,11 +17,11 @@ import sttp.tapir.swagger.http4s.SwaggerHttp4s
 import scala.concurrent.ExecutionContext
 
 class HttpEndpoint(photosEndpoint: PhotosEndpoint) {
-  private val routes = CORS(photosEndpoint.searchRoute <+> photosEndpoint.startIndexingRoute)
+  private val routes = CORS(photosEndpoint.searchRoute)
 
   val openApiDefinition: String =
-    List(photosEndpoint.searchEndpoint, photosEndpoint.startIndexingEndpoint)
-      .toOpenAPI("Meta data digger", "0.1")
+    OpenAPIDocsInterpreter
+      .toOpenAPI(List(photosEndpoint.searchEndpoint), "Meta data digger", "0.1")
       .servers(List(Server(s"http://localhost:8080/$apiPath")))
       .toYaml
 

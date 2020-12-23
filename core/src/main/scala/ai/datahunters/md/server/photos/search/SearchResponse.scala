@@ -6,3 +6,5 @@ case class SearchResponse(
     page: Int,
     total: Long,
     possibleFilters: Set[PossibleFilter])
+
+case class Dupa(map: Map[Field, Map[String, Long]])
