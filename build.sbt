@@ -71,7 +71,7 @@ lazy val strictScalacOptions =  Seq(
 
 ThisBuild / organization := "ai.datahunters.md"
 ThisBuild / version := "0.0.1-SNAPSHOT"
-ThisBuild / scalaVersion := "2.13.4"
+ThisBuild / scalaVersion := "2.13.6"
 
 lazy val core = project
   .settings(
