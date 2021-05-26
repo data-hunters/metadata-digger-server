@@ -11,7 +11,7 @@ lazy val coreDependencies = Seq(
   "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
   "org.scalatest" %% "scalatest" % "3.2.8" % Test,
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % Test,
-  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.5" % Test,
+  "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % "1.3.0" % Test,
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
   "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
