@@ -15,7 +15,7 @@ lazy val coreDependencies = Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
   "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
-  "com.github.pureconfig" %% "pureconfig" % "0.15.0",
+  "com.github.pureconfig" %% "pureconfig" % "0.16.0",
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,
