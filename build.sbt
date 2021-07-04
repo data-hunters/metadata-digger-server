@@ -1,6 +1,6 @@
 lazy val tapirVersion = "0.17.8"
 lazy val circeVersion = "0.13.0"
-lazy val enumeratumVersion = "1.6.1"
+lazy val enumeratumVersion = "1.7.0"
 
 lazy val coreDependencies = Seq(
   "io.monix" %% "monix-bio" % "1.2.0",
