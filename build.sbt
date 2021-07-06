@@ -1,21 +1,21 @@
 lazy val tapirVersion = "0.17.8"
-lazy val circeVersion = "0.14.1"
-lazy val enumeratumVersion = "1.6.1"
+lazy val circeVersion = "0.13.0"
+lazy val enumeratumVersion = "1.7.0"
 
 lazy val coreDependencies = Seq(
-  "io.monix" %% "monix-bio" % "1.0.0",
+  "io.monix" %% "monix-bio" % "1.2.0",
   "com.softwaremill.sttp.tapir" %% "tapir-core" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
-  "org.scalatest" %% "scalatest" % "3.2.8" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.9" % Test,
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % Test,
-  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.5" % Test,
+  "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % "1.3.0" % Test,
   "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
   "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
-  "com.github.pureconfig" %% "pureconfig" % "0.15.0",
+  "com.github.pureconfig" %% "pureconfig" % "0.16.0",
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,
@@ -71,7 +71,7 @@ lazy val strictScalacOptions =  Seq(
 
 ThisBuild / organization := "ai.datahunters.md"
 ThisBuild / version := "0.0.1-SNAPSHOT"
-ThisBuild / scalaVersion := "2.13.4"
+ThisBuild / scalaVersion := "2.13.6"
 
 lazy val core = project
   .settings(
