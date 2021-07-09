@@ -21,7 +21,7 @@ lazy val coreDependencies = Seq(
   "io.circe" %% "circe-generic-extras" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
-  "org.apache.tika" % "tika-core" % "1.26",
+  "org.apache.tika" % "tika-core" % "1.27",
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % tapirVersion,
   "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-http4s" % tapirVersion,
