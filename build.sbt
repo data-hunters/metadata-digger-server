@@ -12,7 +12,7 @@ lazy val coreDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.2.9" % Test,
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % Test,
   "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % "1.3.0" % Test,
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "ch.qos.logback" % "logback-classic" % "1.2.4",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
   "com.github.takezoe" %% "solr-scala-client" % "0.0.24",
   "com.github.pureconfig" %% "pureconfig" % "0.16.0",
